@@ -1,0 +1,1601 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/home_bg.jpeg">
+  <link rel="icon" href="/img/home_bg.jpeg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1. 透射电镜基本原理 (TEM Basic Principles)1.1 电镜诞生前的关键发现 1924年 — 德布罗意 (de Broglie) 提出“物质波假说”：电子具有波动性。 1926年 — 德国物理学家 Busch 发现电磁透镜 (electromagnetic lens)，可作为“透镜”聚焦电子束。 1933年 — Ernst Ruska 和 Max Knoll 发明首台电子显微镜">
+<meta property="og:type" content="article">
+<meta property="og:title" content="电子显微镜技术">
+<meta property="og:url" content="http://example.com/2026/06/19/%E7%94%B5%E5%AD%90%E6%98%BE%E5%BE%AE%E9%95%9C%E6%8A%80%E6%9C%AF/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1. 透射电镜基本原理 (TEM Basic Principles)1.1 电镜诞生前的关键发现 1924年 — 德布罗意 (de Broglie) 提出“物质波假说”：电子具有波动性。 1926年 — 德国物理学家 Busch 发现电磁透镜 (electromagnetic lens)，可作为“透镜”聚焦电子束。 1933年 — Ernst Ruska 和 Max Knoll 发明首台电子显微镜">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-06-19T09:30:00.000Z">
+<meta property="article:modified_time" content="2026-06-25T11:15:33.610Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>电子显微镜技术 - Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>DMQY</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>HOME</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>CONTACT</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>CATEGORIES</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-exp-fill"></i>
+                <span>PROJECTS</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/BIOLLM/" target="_self">
+                    
+                    <span>BIOLLM</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xulabpagedeployer.vercel.app/" target="_self">
+                    
+                    <span>LAB_SITE</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://github.com/dmqy0930/GEOdatacollection" target="_self">
+                    
+                    <span>GEOdatacollection</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/" target="_self">
+                    
+                    <span>F1-SIMULATOR</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/post_bg.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="电子显微镜技术"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-06-19 17:30" pubdate>
+          2026年6月19日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          41 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">电子显微镜技术</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="1-透射电镜基本原理-TEM-Basic-Principles"><a href="#1-透射电镜基本原理-TEM-Basic-Principles" class="headerlink" title="1. 透射电镜基本原理 (TEM Basic Principles)"></a>1. 透射电镜基本原理 (TEM Basic Principles)</h2><h3 id="1-1-电镜诞生前的关键发现"><a href="#1-1-电镜诞生前的关键发现" class="headerlink" title="1.1 电镜诞生前的关键发现"></a>1.1 电镜诞生前的关键发现</h3><ul>
+<li><strong>1924年</strong> — 德布罗意 (de Broglie) 提出“<strong>物质波假说</strong>”：电子具有波动性。</li>
+<li><strong>1926年</strong> — 德国物理学家 Busch 发现<strong>电磁透镜 (electromagnetic lens)</strong>，可作为“透镜”聚焦电子束。</li>
+<li><strong>1933年</strong> — Ernst Ruska 和 Max Knoll 发明<strong>首台电子显微镜</strong>。Ruska 获 <strong>1986年诺贝尔物理学奖</strong>。</li>
+</ul>
+<h3 id="1-2-透射电镜结构"><a href="#1-2-透射电镜结构" class="headerlink" title="1.2 透射电镜结构"></a>1.2 透射电镜结构</h3><p>TEM 由三大系统组成：</p>
+<table>
+<thead>
+<tr>
+<th>系统</th>
+<th>英文</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>照明系统</td>
+<td>Illumination system</td>
+<td>电子枪 + 聚光镜，产生平行电子束</td>
+</tr>
+<tr>
+<td>成像系统</td>
+<td>Imaging system</td>
+<td>物镜 + 中间镜 + 投影镜，形成图像</td>
+</tr>
+<tr>
+<td>观察系统</td>
+<td>Observation system</td>
+<td>荧光屏 &#x2F; 相机记录图像</td>
+</tr>
+</tbody></table>
+<h3 id="1-3-透射电镜二维成像原理"><a href="#1-3-透射电镜二维成像原理" class="headerlink" title="1.3 透射电镜二维成像原理"></a>1.3 透射电镜二维成像原理</h3><p>TEM 的成像过程是一个<strong>两级傅里叶变换</strong>：</p>
+<ol>
+<li><strong>物镜后焦面 (back focal plane)</strong>：平行电子束穿过样品 → 散射电子在物镜后焦面形成<strong>衍射图</strong> &#x3D; 样品的<strong>傅里叶变换 (Fourier Transform)</strong></li>
+<li><strong>像平面 (image plane)</strong>：衍射波继续传播 → 在像平面干涉形成图像 &#x3D; 衍射图的<strong>逆傅里叶变换 (Inverse Fourier Transform)</strong></li>
+</ol>
+<blockquote>
+<p><strong>关键概念</strong>：电镜成像是样品的<strong>二维投影 (2D projection)</strong>，像平面与后焦面互为傅里叶变换关系。</p>
+</blockquote>
+<h3 id="1-4-衬度传递函数-Contrast-Transfer-Function-CTF"><a href="#1-4-衬度传递函数-Contrast-Transfer-Function-CTF" class="headerlink" title="1.4 衬度传递函数 (Contrast Transfer Function, CTF)"></a>1.4 衬度传递函数 (Contrast Transfer Function, CTF)</h3><ul>
+<li>CTF 描述电镜对不同空间频率信号传递效率的函数。</li>
+<li>在后续三维重构中需要对 CTF 进行<strong>校正 (CTF correction&#x2F;estimation)</strong>。</li>
+</ul>
+<h3 id="1-5-样品制备"><a href="#1-5-样品制备" class="headerlink" title="1.5 样品制备"></a>1.5 样品制备</h3><p><strong>生物样品基本要求</strong>：</p>
+<ul>
+<li>样品要<strong>足够薄</strong>以便电子束穿过。</li>
+<li>组织&#x2F;细胞：<strong>超薄切片 (ultrathin section)</strong>，厚度 <strong>&lt; 0.5 μm</strong>。</li>
+<li>蛋白：直接制样。</li>
+</ul>
+<h4 id="a-负染色技术-Negative-Staining"><a href="#a-负染色技术-Negative-Staining" class="headerlink" title="(a) 负染色技术 (Negative Staining)"></a>(a) 负染色技术 (Negative Staining)</h4><ul>
+<li>用<strong>重金属盐染料</strong>（如磷钨酸、醋酸铀）对样品进行染色。</li>
+<li><strong>原理</strong>：重金属沉积在蛋白表面的染料<strong>少于</strong>碳膜表面 → 蛋白区域透过电子多→显<strong>白色</strong>，背景透过电子少→显<strong>暗色</strong>。</li>
+<li>负染可提高<strong>衬度 (contrast)</strong>，但不能达到原子分辨率。</li>
+</ul>
+<h4 id="b-冷冻技术-Cryo-freezing-Vitrification"><a href="#b-冷冻技术-Cryo-freezing-Vitrification" class="headerlink" title="(b) 冷冻技术 (Cryo-freezing &#x2F; Vitrification)"></a>(b) 冷冻技术 (Cryo-freezing &#x2F; Vitrification)</h4><ul>
+<li>将样品<strong>冷冻固定在玻璃态冰 (vitreous ice)</strong> 中，在低温下观察。</li>
+<li><strong>为什么要冷冻？</strong> → 保持样品活性状态 (near-native state)</li>
+<li><strong>为什么用玻璃态冰？</strong> → 背景干净，减少样品损伤</li>
+<li><strong>如何获得玻璃态冰？</strong> → 冷冻速率 <strong>&gt; 10⁴ °C&#x2F;s</strong>（即&gt;10000°C&#x2F;s）</li>
+<li><strong>关键人物</strong>：Jacques Dubochet (2017年诺贝尔化学奖)</li>
+</ul>
+<blockquote>
+<p><strong>对比记忆</strong>：负染 → 常温、高衬度、低分辨率；冷冻 → 低温、低衬度、高分辨率。</p>
+</blockquote>
+<h3 id="1-6-TEM-操作三大过程（考流程）"><a href="#1-6-TEM-操作三大过程（考流程）" class="headerlink" title="1.6 TEM 操作三大过程（考流程）"></a>1.6 TEM 操作三大过程（考流程）</h3><ol>
+<li><strong>样品准备 (Sample preparation)</strong> — 冷冻&#x2F;负染</li>
+<li><strong>电镜数据收集 (Data collection)</strong> — 低剂量成像</li>
+<li><strong>图像处理 (Image processing)</strong> — 2D → 3D 重构</li>
+</ol>
+<h3 id="1-7-TEM-在生物医学中的应用"><a href="#1-7-TEM-在生物医学中的应用" class="headerlink" title="1.7 TEM 在生物医学中的应用"></a>1.7 TEM 在生物医学中的应用</h3><ul>
+<li>生物样品<strong>质量鉴定</strong>、病毒感染诊断（如病毒表面spike蛋白分布）</li>
+<li>组织切片结构研究（如骨骼肌三联管结构：T管、终末池、RyR）</li>
+<li><strong>构建&#x2F;解析蛋白三维结构</strong>：2D投影 → 图像处理 → 3D重构 → 原子模型</li>
+<li>分析<strong>复合物蛋白</strong>之间的作用（如剪切体 spliceosome 工作机制）</li>
+</ul>
+<h3 id="1-8-冷冻电镜三大研究技术（必考对比表）"><a href="#1-8-冷冻电镜三大研究技术（必考对比表）" class="headerlink" title="1.8 冷冻电镜三大研究技术（必考对比表）"></a>1.8 冷冻电镜三大研究技术（必考对比表）</h3><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>英文</th>
+<th>研究对象</th>
+<th>对象特点</th>
+<th>典型分辨率</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>电子晶体学</td>
+<td>Electron Crystallography</td>
+<td>二维晶体&#x2F;管状晶体&#x2F;微晶</td>
+<td>周期排列&#x2F;规则排列</td>
+<td>0.19 nm (2D晶体)</td>
+</tr>
+<tr>
+<td>单颗粒技术</td>
+<td>Single Particle Analysis (SPA)</td>
+<td>病毒&#x2F;生物大分子</td>
+<td>全同粒子 (identical particles)</td>
+<td>0.12 nm</td>
+</tr>
+<tr>
+<td>电子断层成像</td>
+<td>Electron Tomography (ET)</td>
+<td>细胞器&#x2F;细胞</td>
+<td>单一结构 (unique structure)</td>
+<td>0.38 nm ~ 2 nm</td>
+</tr>
+</tbody></table>
+<h3 id="1-9-TEM-发展里程碑（时间节点题）"><a href="#1-9-TEM-发展里程碑（时间节点题）" class="headerlink" title="1.9 TEM 发展里程碑（时间节点题）"></a>1.9 TEM 发展里程碑（时间节点题）</h3><table>
+<thead>
+<tr>
+<th>年代</th>
+<th>事件</th>
+<th>人物</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1924</td>
+<td>物质波假说</td>
+<td>de Broglie</td>
+</tr>
+<tr>
+<td>1926</td>
+<td>发现电磁透镜</td>
+<td>Busch</td>
+</tr>
+<tr>
+<td>1933</td>
+<td><strong>首台电镜诞生</strong></td>
+<td>Ruska &amp; Knoll</td>
+</tr>
+<tr>
+<td>1968</td>
+<td><strong>中央截面定理</strong> (Central Section Theorem)</td>
+<td>Aaron Klug</td>
+</tr>
+<tr>
+<td>1970</td>
+<td>首个二十面体病毒3D结构</td>
+<td>Klug</td>
+</tr>
+<tr>
+<td>1982</td>
+<td>诺贝尔化学奖（3D电镜）</td>
+<td>Klug</td>
+</tr>
+<tr>
+<td>1984</td>
+<td><strong>快速冷冻技术</strong>（玻璃态冰）</td>
+<td>Dubochet</td>
+</tr>
+<tr>
+<td>2012-13</td>
+<td>三大突破：<strong>Titan Krios电镜 + DDD相机 + RELION软件</strong></td>
+<td>—</td>
+</tr>
+<tr>
+<td>2017</td>
+<td><strong>诺贝尔化学奖</strong>（冷冻电镜）</td>
+<td>Dubochet, Frank, Henderson</td>
+</tr>
+</tbody></table>
+<h3 id="1-10-2012年后的三大技术突破"><a href="#1-10-2012年后的三大技术突破" class="headerlink" title="1.10 2012年后的三大技术突破"></a>1.10 2012年后的三大技术突破</h3><p><strong>Breakthrough I：Titan Krios 300kV 场发射电镜</strong></p>
+<ul>
+<li>三级聚光系统 → 提高电子束相干性和平行性 → 提高成像分辨率</li>
+<li>12个冷冻载网盒 → 提高上样效率</li>
+<li>预装载冷却装置 → 延长收集数据时间</li>
+</ul>
+<p><strong>Breakthrough II：DDD相机 (Direct Detective Device)</strong></p>
+<ul>
+<li><strong>CCD vs DDD 对比</strong>：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>CCD相机</th>
+<th>DDD相机</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>原理</td>
+<td>电子→光信号转换（电光-光电转换）</td>
+<td><strong>直接探测电子</strong></td>
+</tr>
+<tr>
+<td>信号</td>
+<td>点扩散效应，信号损失</td>
+<td>保持原始信号强度</td>
+</tr>
+<tr>
+<td>信噪比</td>
+<td>低</td>
+<td><strong>高</strong></td>
+</tr>
+<tr>
+<td>摄像速度</td>
+<td>1幅&#x2F;秒</td>
+<td><strong>40幅&#x2F;秒</strong>（消除漂移）</td>
+</tr>
+<tr>
+<td>分辨率</td>
+<td>低，图像模糊</td>
+<td><strong>高</strong>，图像清楚</td>
+</tr>
+</tbody></table>
+<ul>
+<li>首个近原子分辨率冷冻电镜结构：TRPV1 离子通道（3.4Å），程亦凡组 2013 Nature</li>
+</ul>
+<p><strong>Breakthrough III：RELION 软件包</strong></p>
+<ul>
+<li>2012年前软件（SPIDER, IMAGIC, EMAN）：按分子<strong>取向 (orientation)</strong> 分类 → 误差大</li>
+<li>RELION：按分子<strong>构象 (conformation)</strong> 分类 → 分类准确，分辨率提高</li>
+<li>推动从<strong>静态</strong>结构生物学向<strong>动态</strong>结构生物学发展</li>
+<li>被 Nature 评为<strong>2014年科学”十大进展”之一</strong></li>
+</ul>
+<h3 id="1-11-为什么要高分辨率？"><a href="#1-11-为什么要高分辨率？" class="headerlink" title="1.11 为什么要高分辨率？"></a>1.11 为什么要高分辨率？</h3><ul>
+<li>低分辨率 → 只能看到分子轮廓（”blob”状）</li>
+<li>高分辨率 → 可分辨氨基酸侧链（如区分 Tyr&#x2F;Trp&#x2F;Phe）→ <strong>构建原子模型 (atomic model)</strong></li>
+</ul>
+<h3 id="1-12-冷冻电镜研究方向"><a href="#1-12-冷冻电镜研究方向" class="headerlink" title="1.12 冷冻电镜研究方向"></a>1.12 冷冻电镜研究方向</h3><ul>
+<li>研究<strong>更小分子</strong>的蛋白结构（如64kD血红蛋白，3.2Å）</li>
+<li>研究<strong>更高分辨率</strong>的蛋白结构（如去铁铁蛋白 Apoferritin，1.2Å）</li>
+<li><strong>细胞原位结构</strong>研究（Cryo-ET + FIB）</li>
+</ul>
+<hr>
+<h2 id="2-冷冻电镜单颗粒分析技术-Cryo-EM-Single-Particle-Analysis"><a href="#2-冷冻电镜单颗粒分析技术-Cryo-EM-Single-Particle-Analysis" class="headerlink" title="2. 冷冻电镜单颗粒分析技术 (Cryo-EM Single Particle Analysis)"></a>2. 冷冻电镜单颗粒分析技术 (Cryo-EM Single Particle Analysis)</h2><h3 id="2-1-中央截面定理-Central-Section-Theorem"><a href="#2-1-中央截面定理-Central-Section-Theorem" class="headerlink" title="2.1 中央截面定理 (Central Section Theorem)"></a>2.1 中央截面定理 (Central Section Theorem)</h3><ul>
+<li><strong>提出者</strong>：Aaron Klug (1968) — 1982年诺贝尔化学奖</li>
+<li><strong>内容</strong>：物体沿电子束方向二维投影的<strong>傅里叶变换</strong>等于该物体三维傅里叶变换在<strong>垂直于电子束方向</strong>的<strong>中央截面</strong>。</li>
+<li><strong>推论</strong>：三维重构需要收集<strong>不同方向</strong>的二维投影。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs">二维投影 → 傅里叶变换 → 中央截面<br>多个不同方向的中央截面 → 逆傅里叶变换 → 三维结构<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-2-辐射损伤与剂量矛盾"><a href="#2-2-辐射损伤与剂量矛盾" class="headerlink" title="2.2 辐射损伤与剂量矛盾"></a>2.2 辐射损伤与剂量矛盾</h3><ul>
+<li>高能入射电子对生物样品造成<strong>辐射损害 (radiation damage)</strong> → 严重破坏样品结构 → 限制了电子使用剂量</li>
+<li>样品需要<strong>更好衬度</strong> → 需要高剂量电子</li>
+<li>SPA 的解决方案：使用高剂量只收集一次数据，通过平均同取向颗粒来提高信噪比</li>
+</ul>
+<h3 id="2-3-SPA-基本原理"><a href="#2-3-SPA-基本原理" class="headerlink" title="2.3 SPA 基本原理"></a>2.3 SPA 基本原理</h3><ul>
+<li><strong>研究对象</strong>：<strong>全同粒子 (identical particles)</strong></li>
+<li><strong>核心假设</strong>：每个大分子结构相同；不同分子颗粒的不同取向可视为同一分子的不同取向</li>
+<li>通过软件模拟计算每个颗粒的取向 → 用来重构三维模型</li>
+</ul>
+<h3 id="2-4-SPA-的五大优势"><a href="#2-4-SPA-的五大优势" class="headerlink" title="2.4 SPA 的五大优势"></a>2.4 SPA 的五大优势</h3><ol>
+<li><strong>可使用高剂量</strong>：SPA只收集一次数据（同一颗粒被拍摄一次），在不破坏样品结构的前提下获得更高衬度</li>
+<li><strong>大幅提高信噪比</strong>：获得大量同一取向颗粒，通过<strong>平均 (averaging)</strong> 提高对比度</li>
+<li><strong>应用范围广</strong>：蛋白质、核酸、病毒等（在膜蛋白领域拥有巨大优势）</li>
+<li><strong>研究溶液中样品</strong>：更接近生理状态，可捕捉反应中间物（如时间分辨冷冻电镜）</li>
+<li><strong>可分析异质性样品 (heterogeneous samples)</strong>：多种构象、多种蛋白（甚至可直接研究菌液）</li>
+<li><strong>需要样品少</strong>：~5μg&#x2F;载网 (grid)；可分析内源微量样品</li>
+<li><strong>简单快速</strong>：有纯化蛋白质样品只需要 <strong>1-2天</strong></li>
+</ol>
+<h3 id="2-5-颗粒数目与分辨率的关系"><a href="#2-5-颗粒数目与分辨率的关系" class="headerlink" title="2.5 颗粒数目与分辨率的关系"></a>2.5 颗粒数目与分辨率的关系</h3><table>
+<thead>
+<tr>
+<th>目标分辨率</th>
+<th>约需颗粒数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>6Å</td>
+<td>~1,500 个</td>
+</tr>
+<tr>
+<td>4Å</td>
+<td>~10⁴ 个</td>
+</tr>
+<tr>
+<td>3Å</td>
+<td>~10⁵ 个</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>参考：Rosenthal (2003) JMB 333, 225-36</p>
+</blockquote>
+<h3 id="2-6-SPA-工作流程"><a href="#2-6-SPA-工作流程" class="headerlink" title="2.6 SPA 工作流程"></a>2.6 SPA 工作流程</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">冷冻样品制备 → 数据收集 → 数据处理<br></code></pre></td></tr></table></figure>
+
+<p><strong>数据处理具体步骤</strong>：</p>
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs mathematica">原始视频 <span class="hljs-punctuation">(</span><span class="hljs-variable">Raw</span> <span class="hljs-variable">movie</span><span class="hljs-punctuation">)</span><br>    ↓ <span class="hljs-variable">Motion</span> <span class="hljs-variable">Correction</span>（漂移校正）<br>    ↓ <span class="hljs-variable">CTF</span> <span class="hljs-variable">Estimation</span>（衬度传递函数估计）<br>    ↓ <span class="hljs-variable">Particle</span> <span class="hljs-variable">Picking</span>（颗粒挑选）<br>    ↓ <span class="hljs-number">2</span><span class="hljs-built_in">D</span> <span class="hljs-variable">Classification</span>（二维分类）<br>    ↓ <span class="hljs-number">3</span><span class="hljs-built_in">D</span> <span class="hljs-variable">Classification</span>（三维分类）<br>    ↓ <span class="hljs-number">3</span><span class="hljs-built_in">D</span> <span class="hljs-variable">Refinement</span>（三维精修）<br>    → 三维模型 <span class="hljs-punctuation">(</span><span class="hljs-number">3</span><span class="hljs-built_in">D</span> <span class="hljs-variable">Model</span><span class="hljs-punctuation">)</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>常用软件</strong>：Relion、CryoSPARC、CisTEM</p>
+<p><strong>数据自动收集软件</strong>：EPU (FEI)、SerialEM — 每小时采集 &gt;300 段视频</p>
+<h3 id="2-7-SPA-的限制因素"><a href="#2-7-SPA-的限制因素" class="headerlink" title="2.7 SPA 的限制因素"></a>2.7 SPA 的限制因素</h3><ul>
+<li><strong>样品大小</strong>：&gt;100 kDa 容易；50-100 kDa 可行；太小可通过<strong>抗体形成复合物</strong>研究</li>
+<li><strong>需要高端仪器平台</strong>（Titan Krios等）</li>
+<li><strong>异质性</strong>：需要足够的构象分类</li>
+</ul>
+<h3 id="2-8-SPA-发展历程"><a href="#2-8-SPA-发展历程" class="headerlink" title="2.8 SPA 发展历程"></a>2.8 SPA 发展历程</h3><table>
+<thead>
+<tr>
+<th>时期</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2013年前</td>
+<td>低分辨率，原因：①CCD相机信号转换损失信噪比；②采样慢导致图像模糊</td>
+</tr>
+<tr>
+<td>2013年后</td>
+<td><strong>技术革命</strong>：DDD相机 + 新算法 + RELION软件</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>DDD相机优势：直接探测电子 → 高信噪比；快速采样 <strong>40幅&#x2F;秒</strong> → 后期漂移修正 → 大幅提高分辨率</p>
+</blockquote>
+<hr>
+<h2 id="3-冷冻电镜三维重构技术-Cryo-EM-3D-Reconstruction"><a href="#3-冷冻电镜三维重构技术-Cryo-EM-3D-Reconstruction" class="headerlink" title="3. 冷冻电镜三维重构技术 (Cryo-EM 3D Reconstruction)"></a>3. 冷冻电镜三维重构技术 (Cryo-EM 3D Reconstruction)</h2><h3 id="3-1-冷冻电镜四大成像方式"><a href="#3-1-冷冻电镜四大成像方式" class="headerlink" title="3.1 冷冻电镜四大成像方式"></a>3.1 冷冻电镜四大成像方式</h3><table>
+<thead>
+<tr>
+<th>方式</th>
+<th>英文</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>单颗粒分析</td>
+<td>Single Particle Analysis (SPA)</td>
+</tr>
+<tr>
+<td>冷冻电子断层成像</td>
+<td>Cryo-Electron Tomography (Cryo-ET)</td>
+</tr>
+<tr>
+<td>微晶电子衍射</td>
+<td>MicroED</td>
+</tr>
+<tr>
+<td>电子晶体学</td>
+<td>Electron Crystallography</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>EMDB数据库中，SPA占绝对主导地位。</p>
+</blockquote>
+<h3 id="3-2-冷冻电子断层成像-Cryo-ET"><a href="#3-2-冷冻电子断层成像-Cryo-ET" class="headerlink" title="3.2 冷冻电子断层成像 (Cryo-ET)"></a>3.2 冷冻电子断层成像 (Cryo-ET)</h3><h4 id="发展历程"><a href="#发展历程" class="headerlink" title="发展历程"></a>发展历程</h4><ul>
+<li><strong>1993年</strong>：Baumeister 实现自动化数据采集，控制累积电子剂量在可容忍范围内</li>
+<li><strong>最初</strong>：只能研究小物体（如病毒颗粒、小型原核细胞）</li>
+<li><strong>问题</strong>：真核细胞太厚，电子穿透力有限（300kV Krios 只能穿透 <strong>&lt; 0.5-1 μm</strong>）</li>
+<li><strong>解决方案</strong>：<strong>聚焦离子束 (FIB)</strong> 切割 — “打开进入细胞的窗口”</li>
+</ul>
+<h4 id="Cryo-ET-样品减薄方法"><a href="#Cryo-ET-样品减薄方法" class="headerlink" title="Cryo-ET 样品减薄方法"></a>Cryo-ET 样品减薄方法</h4><ul>
+<li><strong>Cryo-FIB&#x2F;SEM</strong>：聚焦离子束+扫描电镜，在冷冻条件下对细胞进行切割减薄</li>
+<li><strong>Cryo-FIB lift-out</strong>：将感兴趣区域从细胞中提取出来</li>
+<li><strong>CEMOVIS</strong> (Cryo-electron microscopy of vitreous sections)：冷冻超薄切片</li>
+</ul>
+<h4 id="Cryo-ET-工作流程"><a href="#Cryo-ET-工作流程" class="headerlink" title="Cryo-ET 工作流程"></a>Cryo-ET 工作流程</h4><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs scss">铺细胞 → 冷冻细胞 → 定位(光镜/荧光) → 样品减薄(FIB) → 上样(TEM) → 数据收集<br></code></pre></td></tr></table></figure>
+
+<h4 id="倾斜序列数据采集"><a href="#倾斜序列数据采集" class="headerlink" title="倾斜序列数据采集"></a>倾斜序列数据采集</h4><ul>
+<li>样品台连续倾转：通常 <strong>±60°</strong>（或-60°到+60°），步长 1-2°</li>
+<li>电子剂量需在倾斜序列中<strong>分配</strong>（剂量分配定理，Hoppe 1976）</li>
+</ul>
+<h4 id="克劳瑟准则-Crowther-Criterion"><a href="#克劳瑟准则-Crowther-Criterion" class="headerlink" title="克劳瑟准则 (Crowther Criterion)"></a>克劳瑟准则 (Crowther Criterion)</h4><figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs abnf"><span class="hljs-attribute">N</span> <span class="hljs-operator">=</span> πD / d<br></code></pre></td></tr></table></figure>
+<ul>
+<li>N：所需颗粒数</li>
+<li>D：物体直径</li>
+<li>d：目标分辨率</li>
+</ul>
+<p>(Crowther, 1969)</p>
+<h4 id="Missing-Wedge-问题"><a href="#Missing-Wedge-问题" class="headerlink" title="Missing Wedge 问题"></a>Missing Wedge 问题</h4><ul>
+<li>倾斜角只能到 <strong>±60°~70°</strong>，无法收集完整的180°数据</li>
+<li>在傅里叶空间中形成 <strong>missing wedge</strong>（数据缺失的楔形区域）</li>
+<li>→ 导致分辨率受限，尤其在z轴方向</li>
+<li><strong>应对方法</strong>：子断层平均法 (Sub-tomogram averaging) — 从不同断层图中提取同种颗粒，平均提高分辨率</li>
+</ul>
+<h4 id="Cryo-ET-分辨率发展"><a href="#Cryo-ET-分辨率发展" class="headerlink" title="Cryo-ET 分辨率发展"></a>Cryo-ET 分辨率发展</h4><ul>
+<li>不断改进中，从早期的几十nm到现在的亚纳米级</li>
+<li>仍远低于 SPA 的单颗粒分辨率水平</li>
+</ul>
+<h4 id="Cryo-ET-应用实例"><a href="#Cryo-ET-应用实例" class="headerlink" title="Cryo-ET 应用实例"></a>Cryo-ET 应用实例</h4><ol>
+<li><strong>真实新冠病毒 (SARS-CoV-2)</strong>：2294个颗粒，获得了病毒颗粒的原位结构</li>
+<li><strong>渐冻症 (ALS)</strong>：通过Cryo-ET分析了神经细胞中 C9orf72 多聚GA聚集体 → 发现其招募并停滞蛋白酶体</li>
+</ol>
+<h3 id="3-3-微晶电子衍射-MicroED"><a href="#3-3-微晶电子衍射-MicroED" class="headerlink" title="3.3 微晶电子衍射 (MicroED)"></a>3.3 微晶电子衍射 (MicroED)</h3><ul>
+<li><strong>开发者</strong>：Tamir Gonen 实验室（2013年底，HHMI Janelia Research Campus）</li>
+<li><strong>本质</strong>：电子晶体学的一种形式，使用<strong>薄3D晶体</strong>通过电子衍射确定结构</li>
+<li><strong>被 Science 评为 2018年十大技术突破之一</strong></li>
+</ul>
+<h4 id="MicroED-特点"><a href="#MicroED-特点" class="headerlink" title="MicroED 特点"></a>MicroED 特点</h4><table>
+<thead>
+<tr>
+<th>特点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>晶体尺寸</td>
+<td>X射线晶体学所需尺寸的<strong>十亿分之一</strong></td>
+</tr>
+<tr>
+<td>工作模式</td>
+<td><strong>衍射模式 (diffraction mode)</strong>，非成像模式</td>
+</tr>
+<tr>
+<td>电子剂量</td>
+<td>极低，通常 <strong>&lt; 0.01 e⁻&#x2F;Å²&#x2F;s</strong></td>
+</tr>
+<tr>
+<td>数据采集</td>
+<td>晶体持续旋转，在快速相机上作为<strong>电影 (movie)</strong> 收集</td>
+</tr>
+<tr>
+<td>数据处理</td>
+<td>使用<strong>传统X射线晶体学软件</strong>处理</td>
+</tr>
+</tbody></table>
+<h4 id="MicroED-优势"><a href="#MicroED-优势" class="headerlink" title="MicroED 优势"></a>MicroED 优势</h4><ol>
+<li><strong>提高难结晶样品结构解析成功率</strong>（晶体的十亿分之一即可）</li>
+<li><strong>显著提高共晶结构成功率</strong>（小分子浸泡共晶更容易）</li>
+<li>设备要求相对较低，使用标准硬件和软件</li>
+</ol>
+<h4 id="MicroED-流程"><a href="#MicroED-流程" class="headerlink" title="MicroED 流程"></a>MicroED 流程</h4><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs scss">制备微晶 (microcrystals) → 冷冻样品 → 采集衍射数据 → 数据处理及结构解析<br></code></pre></td></tr></table></figure>
+
+<p>（数据采集：连续旋转晶体，收集系列衍射图）</p>
+<h3 id="3-4-三种技术对比"><a href="#3-4-三种技术对比" class="headerlink" title="3.4 三种技术对比"></a>3.4 三种技术对比</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>SPA</th>
+<th>Cryo-ET</th>
+<th>MicroED</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>优势</strong></td>
+<td>分辨率较高；丰富的生物背景；为超大柔性分子复合物带来可能</td>
+<td>天然原位的生物结构 (in situ)</td>
+<td>分辨率高；小晶体&#x2F;蛋白质晶体培养难度大大降低；小分子浸泡成功率高；设备要求较低，可实现高通量</td>
+</tr>
+<tr>
+<td><strong>缺点</strong></td>
+<td>分子量 &gt; 40 kDa（太小的颗粒需特殊策略）；测试通量低；设备昂贵</td>
+<td>通常分辨率低（约 <strong>10Å</strong>）；设备要求高、昂贵</td>
+<td>需要 <strong>3D 晶体</strong></td>
+</tr>
+<tr>
+<td><strong>适用</strong></td>
+<td>纯化的蛋白质&#x2F;复合物</td>
+<td>细胞&#x2F;细胞器层面的原位结构</td>
+<td>可结晶的蛋白质（即使是纳米晶体）</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="4-扫描电子显微镜与光电联用-SEM-CLEM"><a href="#4-扫描电子显微镜与光电联用-SEM-CLEM" class="headerlink" title="4. 扫描电子显微镜与光电联用 (SEM &amp; CLEM)"></a>4. 扫描电子显微镜与光电联用 (SEM &amp; CLEM)</h2><h3 id="4-1-SEM-概述"><a href="#4-1-SEM-概述" class="headerlink" title="4.1 SEM 概述"></a>4.1 SEM 概述</h3><ul>
+<li><strong>Scanning Electron Microscope (SEM)</strong>：用于高分辨率<strong>微区形貌分析</strong>的大型精密仪器</li>
+<li><strong>特点</strong>：景深大、分辨率高、成像直观、立体感强、放大倍数范围宽、样品可三维旋转倾斜</li>
+<li><strong>优势</strong>：几乎不损伤和污染原始样品，可同时获得形貌、结构、成分和结晶学信息</li>
+</ul>
+<h3 id="4-2-SEM-与-TEM-的结构差异"><a href="#4-2-SEM-与-TEM-的结构差异" class="headerlink" title="4.2 SEM 与 TEM 的结构差异"></a>4.2 SEM 与 TEM 的结构差异</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>TEM</th>
+<th>SEM</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>电子束</td>
+<td>平行电子束</td>
+<td>聚焦扫描电子束</td>
+</tr>
+<tr>
+<td>成像方式</td>
+<td>一次性大面积成像</td>
+<td>逐点逐行扫描</td>
+</tr>
+<tr>
+<td>信号源</td>
+<td>透射电子</td>
+<td>二次电子&#x2F;背散射电子</td>
+</tr>
+<tr>
+<td>样品</td>
+<td>超薄切片</td>
+<td>表面导电处理</td>
+</tr>
+<tr>
+<td>关键组件</td>
+<td>投影镜</td>
+<td>扫描线圈 + 扫描发生器</td>
+</tr>
+</tbody></table>
+<h3 id="4-3-SEM-结构与基本工作原理"><a href="#4-3-SEM-结构与基本工作原理" class="headerlink" title="4.3 SEM 结构与基本工作原理"></a>4.3 SEM 结构与基本工作原理</h3><ol>
+<li>电子枪发出电子 → 加速电压（通常 200V~30kV）→ 形成高速电子束</li>
+<li>电磁透镜（2-3个）→ 聚成<strong>纳米尺度的束斑</strong> → 聚焦到试样表面</li>
+<li><strong>扫描线圈</strong>控制电子束在试样表面进行<strong>逐点逐行光栅状扫描</strong></li>
+<li>高能电子束与试样相互作用 → 发射各种信号</li>
+<li>探测器接收信号 → 放大器&#x2F;调制解调器 → 显示器显示</li>
+</ol>
+<blockquote>
+<p><strong>关键参数</strong>：分辨率 ~ 探针尺寸（束斑直径）；需要高亮度、小束斑直径</p>
+</blockquote>
+<h3 id="4-4-电子束-样品相互作用"><a href="#4-4-电子束-样品相互作用" class="headerlink" title="4.4 电子束-样品相互作用"></a>4.4 电子束-样品相互作用</h3><p>入射电子与样品作用产生的主要信号：</p>
+<table>
+<thead>
+<tr>
+<th>信号类型</th>
+<th>英文</th>
+<th>深度来源</th>
+<th>主要用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>二次电子</strong></td>
+<td>Secondary Electron (SE)</td>
+<td>表层 <strong>5-10 nm</strong></td>
+<td><strong>表面形貌</strong> (topography)</td>
+</tr>
+<tr>
+<td><strong>背散射电子</strong></td>
+<td>Backscattered Electron (BSE)</td>
+<td>较深层</td>
+<td><strong>原子序数差异&#x2F;成分</strong> (composition)</td>
+</tr>
+<tr>
+<td>透射电子</td>
+<td>Transmitted Electron</td>
+<td>穿透样品</td>
+<td>结构信息</td>
+</tr>
+<tr>
+<td>俄歇电子</td>
+<td>Auger Electron</td>
+<td>最表层</td>
+<td>元素分析</td>
+</tr>
+<tr>
+<td>特征X射线</td>
+<td>Characteristic X-ray</td>
+<td>—</td>
+<td>元素成分分析</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>重点</strong>：二次电子对微区表面相对于入射电子束的方向<strong>十分敏感</strong>，分辨率高，适用于形貌成像；背散射电子强度与原子序数正相关。</p>
+</blockquote>
+<h3 id="4-5-SE-与-BSE-的分离"><a href="#4-5-SE-与-BSE-的分离" class="headerlink" title="4.5 SE 与 BSE 的分离"></a>4.5 SE 与 BSE 的分离</h3><ul>
+<li><strong>二次电子</strong>：数目多、能量低（&lt; 50eV）</li>
+<li><strong>背散射电子</strong>：数目少、能量高（接近入射电子能量）</li>
+<li>通过加<strong>偏压</strong>或不同探测器位置分离两种信号</li>
+</ul>
+<h3 id="4-6-SEM-样品制备流程"><a href="#4-6-SEM-样品制备流程" class="headerlink" title="4.6 SEM 样品制备流程"></a>4.6 SEM 样品制备流程</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">取材 → 清洗 → 固定 → 脱水 → 干燥 → 镀膜 → 观察<br></code></pre></td></tr></table></figure>
+
+<h4 id="a-临界点干燥-Critical-Point-Drying-CPD"><a href="#a-临界点干燥-Critical-Point-Drying-CPD" class="headerlink" title="(a) 临界点干燥 (Critical Point Drying, CPD)"></a>(a) 临界点干燥 (Critical Point Drying, CPD)</h4><ul>
+<li><strong>为什么需要</strong>：普通空气干燥时，穿过液相→气相界面，<strong>表面张力</strong>会破坏样本表面微细结构</li>
+<li><strong>原理</strong>：在<strong>临界点</strong>处，液体和气体物理特性无法区分 → 不穿过液气界面 → 避免破坏</li>
+<li><strong>常用的临界点介质</strong>：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>物质</th>
+<th>临界温度</th>
+<th>临界压力</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>水 (H₂O)</td>
+<td>374°C</td>
+<td>229 bar</td>
+</tr>
+<tr>
+<td>CO₂</td>
+<td><strong>31°C</strong></td>
+<td><strong>74 bar</strong></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>实际使用 <strong>液态CO₂</strong> 作为过渡介质（条件温和）</p>
+</blockquote>
+<h4 id="b-镀膜-Coating"><a href="#b-镀膜-Coating" class="headerlink" title="(b) 镀膜 (Coating)"></a>(b) 镀膜 (Coating)</h4><ul>
+<li><strong>原因</strong>：生物样品不导电 → 表面积累负电荷 → 二次电子发射不稳定 → 图像畸变</li>
+<li><strong>常用镀膜材料</strong>：金 (Au)、铂 (Pt)、金钯合金 (Au-Pd)、碳 (C)</li>
+<li><strong>镀层厚度</strong>：<strong>20-50 nm</strong></li>
+<li><strong>镀膜方法</strong>：<ul>
+<li>真空镀膜（热蒸发）</li>
+<li><strong>离子溅射 (Ion sputtering)</strong> — 最常用</li>
+<li>离子束镀膜</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-7-SEM-发展历程（时间节点题）"><a href="#4-7-SEM-发展历程（时间节点题）" class="headerlink" title="4.7 SEM 发展历程（时间节点题）"></a>4.7 SEM 发展历程（时间节点题）</h3><table>
+<thead>
+<tr>
+<th>年代</th>
+<th>事件</th>
+<th>人物</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1935</td>
+<td>诞生SEM构想</td>
+<td>Ruska &amp; Knoll</td>
+</tr>
+<tr>
+<td>1938</td>
+<td>在TEM上加扫描线圈，建造第一台STEM</td>
+<td>von Ardenne</td>
+</tr>
+<tr>
+<td>1942</td>
+<td>第一台可检测厚样品的SEM，分辨率1μm</td>
+<td>Zworykin, Hillier, Snyder</td>
+</tr>
+<tr>
+<td>1952</td>
+<td>实现 <strong>50nm</strong> 分辨率</td>
+<td>Oatley &amp; McMullan</td>
+</tr>
+<tr>
+<td>1965</td>
+<td><strong>首台商品化SEM</strong>诞生 (Stereoscan)</td>
+<td>Cambridge Scientific Instruments</td>
+</tr>
+<tr>
+<td>1975</td>
+<td>微型计算机引入SEM，分辨率 <strong>6nm</strong></td>
+<td>Amray</td>
+</tr>
+<tr>
+<td>1985</td>
+<td>计算机控制的数字图像SEM</td>
+<td>蔡司 (Zeiss)</td>
+</tr>
+<tr>
+<td>1990</td>
+<td>全面进入数字图像SEM时代</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<h3 id="4-8-SEM-应用实例"><a href="#4-8-SEM-应用实例" class="headerlink" title="4.8 SEM 应用实例"></a>4.8 SEM 应用实例</h3><ul>
+<li><strong>NETs (Neutrophil Extracellular Traps)</strong>：SEM首次清晰展示中性粒细胞胞外诱捕网 “蜘蛛网”样结构（光滑纤维直径 15-17 nm，球状结构域直径 ~25 nm）</li>
+<li><strong>HIV-1出芽</strong> (budding)：从培养的淋巴细胞表面出芽</li>
+<li><strong>外泌体 (Exosomes)</strong>、凋亡小体、坏死小体的形态学分析</li>
+<li><strong>细胞形态学</strong>研究：药物&#x2F;激素处理对细胞形态的影响</li>
+</ul>
+<h3 id="4-9-光电联用显微技术-CLEM"><a href="#4-9-光电联用显微技术-CLEM" class="headerlink" title="4.9 光电联用显微技术 (CLEM)"></a>4.9 光电联用显微技术 (CLEM)</h3><ul>
+<li><strong>全称</strong>：Correlative Light and Electron Microscopy</li>
+<li><strong>定义</strong>：结合<strong>荧光显微镜 (FM)</strong> 和<strong>高分辨率电子显微镜 (EM)</strong> 的显微技术</li>
+<li><strong>核心理念</strong>：<ul>
+<li>FM → <strong>细胞功能信息</strong>（多色标记、活细胞动态）</li>
+<li>EM → <strong>超微结构信息</strong>（纳米级分辨率）</li>
+<li>关联到样品中的<strong>同一区域</strong></li>
+</ul>
+</li>
+</ul>
+<h4 id="CLEM-技术难点"><a href="#CLEM-技术难点" class="headerlink" title="CLEM 技术难点"></a>CLEM 技术难点</h4><ol>
+<li>同时获得高质量的电镜和光镜图片</li>
+<li>实现<strong>精确的配准 (registration)</strong></li>
+<li>电镜制样过程中保留荧光信号（固定、包埋脱水破坏荧光）</li>
+<li>样品在多次转移中容易受到冰污染、升温或损坏</li>
+</ol>
+<h4 id="mEosEM-突破"><a href="#mEosEM-突破" class="headerlink" title="mEosEM 突破"></a>mEosEM 突破</h4><ul>
+<li>2019年，中科院生物物理所徐涛院士团队</li>
+<li>开发<strong>第一个抗锇酸固定和Epon包埋</strong>的光转化荧光蛋白</li>
+<li><strong>首次实现Epon后固定电镜样品的同层超分辨光镜-电镜关联成像</strong></li>
+</ul>
+<h4 id="Cryo-CLIEM"><a href="#Cryo-CLIEM" class="headerlink" title="Cryo-CLIEM"></a>Cryo-CLIEM</h4><ul>
+<li><strong>冷冻光电融合聚焦离子束系统</strong> (cryogenic correlated light, ion and electron microscopy)</li>
+<li>将激光共聚焦显微镜集成到商业化双束电镜中</li>
+<li>实现双束电镜内<strong>冷冻三维多色荧光成像</strong></li>
+</ul>
+<h3 id="4-10-成像组学-Imageomics"><a href="#4-10-成像组学-Imageomics" class="headerlink" title="4.10 成像组学 (Imageomics)"></a>4.10 成像组学 (Imageomics)</h3><ul>
+<li>基因组学 (Genomics)、蛋白质组学 (Proteomics)、代谢组学 (Metabolomics) 揭示生命之剧的”演员”</li>
+<li><strong>成像组学 (Imageomics)</strong> 揭示生命之剧的”剧照”和”剧情”</li>
+<li><strong>表型组学 (Phenomics)</strong> 是生命之剧的”华章”</li>
+<li><strong>NBIC</strong> (National Biomedical Imaging Center)：多模态跨尺度生物医学成像设施，北京大学</li>
+</ul>
+<hr>
+<h2 id="5-跨主题综合考点"><a href="#5-跨主题综合考点" class="headerlink" title="5. 跨主题综合考点"></a>5. 跨主题综合考点</h2><h3 id="5-1-诺贝尔奖总结"><a href="#5-1-诺贝尔奖总结" class="headerlink" title="5.1 诺贝尔奖总结"></a>5.1 诺贝尔奖总结</h3><table>
+<thead>
+<tr>
+<th>年份</th>
+<th>奖项</th>
+<th>获奖者</th>
+<th>贡献</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1986</td>
+<td>物理学奖</td>
+<td>Ernst Ruska</td>
+<td>发明首台电子显微镜</td>
+</tr>
+<tr>
+<td>1982</td>
+<td>化学奖</td>
+<td>Aaron Klug</td>
+<td>提出三维重构中央截面定理</td>
+</tr>
+<tr>
+<td>2009</td>
+<td>化学奖</td>
+<td>—</td>
+<td>核糖体结构</td>
+</tr>
+<tr>
+<td>2017</td>
+<td><strong>化学奖</strong></td>
+<td><strong>Jacques Dubochet, Joachim Frank, Richard Henderson</strong></td>
+<td><strong>发展冷冻电镜技术</strong></td>
+</tr>
+</tbody></table>
+<h3 id="5-2-分辨率对比"><a href="#5-2-分辨率对比" class="headerlink" title="5.2 分辨率对比"></a>5.2 分辨率对比</h3><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>分辨率范围</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TEM 冷冻电镜 (SPA)</td>
+<td>可达 <strong>1.2 Å</strong> (原子分辨率)</td>
+</tr>
+<tr>
+<td>Cryo-ET</td>
+<td>约 <strong>10 Å</strong> (原位结构)</td>
+</tr>
+<tr>
+<td>MicroED</td>
+<td>可达原子分辨率</td>
+</tr>
+<tr>
+<td>SEM</td>
+<td>nm级 (形貌)</td>
+</tr>
+<tr>
+<td>光学显微镜</td>
+<td>~200 nm (衍射极限)</td>
+</tr>
+</tbody></table>
+<h3 id="5-3-样品制备关键参数速记"><a href="#5-3-样品制备关键参数速记" class="headerlink" title="5.3 样品制备关键参数速记"></a>5.3 样品制备关键参数速记</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>数值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TEM 超薄切片厚度</td>
+<td>&lt; 0.5 μm</td>
+</tr>
+<tr>
+<td>玻璃态冰冷冻速率</td>
+<td>&gt; 10⁴ °C&#x2F;s</td>
+</tr>
+<tr>
+<td>SEM 镀膜厚度</td>
+<td>20-50 nm</td>
+</tr>
+<tr>
+<td>CO₂ 临界点温度&#x2F;压力</td>
+<td>31°C &#x2F; 74 bar</td>
+</tr>
+<tr>
+<td>SPA 所需蛋白量</td>
+<td>~5 μg&#x2F;格网</td>
+</tr>
+<tr>
+<td>300kV 电子穿透极限</td>
+<td>0.5-1 μm</td>
+</tr>
+<tr>
+<td>MicroED 电子剂量</td>
+<td>&lt; 0.01 e⁻&#x2F;Å²&#x2F;s</td>
+</tr>
+<tr>
+<td>DDD 采集速率</td>
+<td>40 幅&#x2F;秒</td>
+</tr>
+</tbody></table>
+<h3 id="5-4-关键英文术语汇总"><a href="#5-4-关键英文术语汇总" class="headerlink" title="5.4 关键英文术语汇总"></a>5.4 关键英文术语汇总</h3><table>
+<thead>
+<tr>
+<th>中文</th>
+<th>英文</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>透射电子显微镜</td>
+<td>Transmission Electron Microscope (TEM)</td>
+</tr>
+<tr>
+<td>扫描电子显微镜</td>
+<td>Scanning Electron Microscope (SEM)</td>
+</tr>
+<tr>
+<td>冷冻电镜</td>
+<td>Cryo-Electron Microscopy (Cryo-EM)</td>
+</tr>
+<tr>
+<td>单颗粒分析</td>
+<td>Single Particle Analysis (SPA)</td>
+</tr>
+<tr>
+<td>电子断层成像</td>
+<td>Electron Tomography (ET)</td>
+</tr>
+<tr>
+<td>微晶电子衍射</td>
+<td>Micro Electron Diffraction (MicroED)</td>
+</tr>
+<tr>
+<td>光电联用</td>
+<td>Correlative Light and Electron Microscopy (CLEM)</td>
+</tr>
+<tr>
+<td>中央截面定理</td>
+<td>Central Section Theorem</td>
+</tr>
+<tr>
+<td>衬度传递函数</td>
+<td>Contrast Transfer Function (CTF)</td>
+</tr>
+<tr>
+<td>直接电子探测器</td>
+<td>Direct Detective Device (DDD)</td>
+</tr>
+<tr>
+<td>聚焦离子束</td>
+<td>Focused Ion Beam (FIB)</td>
+</tr>
+<tr>
+<td>玻璃态冰</td>
+<td>Vitreous Ice</td>
+</tr>
+<tr>
+<td>负染色</td>
+<td>Negative Staining</td>
+</tr>
+<tr>
+<td>二次电子</td>
+<td>Secondary Electron (SE)</td>
+</tr>
+<tr>
+<td>背散射电子</td>
+<td>Backscattered Electron (BSE)</td>
+</tr>
+<tr>
+<td>临界点干燥</td>
+<td>Critical Point Drying (CPD)</td>
+</tr>
+<tr>
+<td>辐射损伤</td>
+<td>Radiation Damage</td>
+</tr>
+<tr>
+<td>漂移校正</td>
+<td>Motion Correction</td>
+</tr>
+<tr>
+<td>三维重构&#x2F;精修</td>
+<td>3D Reconstruction &#x2F; Refinement</td>
+</tr>
+</tbody></table>
+<h3 id="5-5-常见考试题型预测"><a href="#5-5-常见考试题型预测" class="headerlink" title="5.5 常见考试题型预测"></a>5.5 常见考试题型预测</h3><ol>
+<li><strong>简答&#x2F;名词解释</strong>：CTF、中央截面定理、Missing Wedge、CPD原理、DDD与CCD区别</li>
+<li><strong>流程排序</strong>：SPA数据处理流程、SEM制样流程、Cryo-ET工作流程</li>
+<li><strong>对比填表</strong>：SPA vs Cryo-ET vs MicroED；TEM vs SEM；二次电子 vs 背散射电子</li>
+<li><strong>计算题</strong>：颗粒数-分辨率关系、Crowther准则 N &#x3D; πD&#x2F;d</li>
+<li><strong>论述题</strong>：冷冻电镜三大技术突破及其意义、CLEM技术难点及解决方案</li>
+</ol>
+<hr>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/AI4Study/" class="category-chain-item">AI4Study</a>
+  
+  
+
+      </span>
+    
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AF%BE%E5%86%85/" class="category-chain-item">课内</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E8%AF%BE%E5%86%85/%E5%A4%A7%E4%B8%89%E4%B8%8B/" class="category-chain-item">大三下</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E8%AF%BE%E5%86%85/%E5%A4%A7%E4%B8%89%E4%B8%8B/%E7%90%86%E5%B7%A5%E4%BF%A1%EF%BC%88%E4%B8%8B%EF%BC%89/" class="category-chain-item">理工信（下）</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>电子显微镜技术</div>
+      <div>http://example.com/2026/06/19/电子显微镜技术/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>John Doe</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年6月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/06/25/%E8%B4%A8%E8%B0%B1%E4%B8%8E%E7%BB%93%E6%9E%84%E7%94%9F%E7%89%A9%E5%AD%A6%E6%8A%80%E6%9C%AF/" title="质谱与结构生物学技术">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">质谱与结构生物学技术</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/06/10/%E5%85%AC%E5%85%B1%E8%A5%BF%E7%8F%AD%E7%89%99%E8%AF%AD%EF%BC%881%EF%BC%89%E6%9C%9F%E6%9C%AB%E8%80%83%E8%AF%95%E5%A4%8D%E4%B9%A0/" title="公共西班牙语（1）期末考试复习">
+                        <span class="hidden-mobile">公共西班牙语（1）期末考试复习</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> <div style="font-size: 0.85rem"> <span id="g-total-word-id">Getting word count...</span> </div> <div class="total-posts" style="font-size: 0.85rem; margin: 0.15rem 0.15rem;"> <i class="fas fa-file-alt"></i> <span id="g-total-posts-id">Getting total posts...</span> </div>
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  <script type="text/javascript">
+  document.getElementById("g-total-word-id").innerHTML = "全站总字数 101k";
+</script>
+<script type="text/javascript">
+  document.getElementById('g-total-posts-id').textContent ="全站总文章数 18";
+</script>
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

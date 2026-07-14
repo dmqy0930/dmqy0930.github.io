@@ -1,0 +1,880 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/home_bg.jpeg">
+  <link rel="icon" href="/img/home_bg.jpeg">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/page/2/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Hexo</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 100vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>DMQY</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>HOME</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>CONTACT</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>CATEGORIES</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-exp-fill"></i>
+                <span>PROJECTS</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/BIOLLM/" target="_self">
+                    
+                    <span>BIOLLM</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xulabpagedeployer.vercel.app/" target="_self">
+                    
+                    <span>LAB_SITE</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://github.com/dmqy0930/GEOdatacollection" target="_self">
+                    
+                    <span>GEOdatacollection</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/" target="_self">
+                    
+                    <span>F1-SIMULATOR</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/home_bg.jpeg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Per Aspera Ad Astra"></span>
+          
+        </div>
+
+        
+      </div>
+
+      
+        <div class="scroll-down-bar">
+          <i class="iconfont icon-arrowdown"></i>
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-x-md">
+        <div id="board"
+          style="margin-top: 0">
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2026/03/23/%E5%8E%9F%E8%99%AB/" target="_self">
+          原虫Protozoa
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2026/03/23/%E5%8E%9F%E8%99%AB/" target="_self">
+        <div>
+          原虫protozoa：单细胞真核动物，具有完整的生理功能（多数自生生活） 医学原虫medical protozoa：寄生于人体（管腔、体液、组织或细胞内）的原虫  致病：疟原虫&#x2F;利什曼原虫 非致病：结肠内阿米巴&#x2F;齿龈内阿米巴  四类寄生在人体的原虫  动鞭纲：有鞭毛，阴道毛滴虫&#x2F;杜氏利什曼原虫&#x2F;蓝氏贾第鞭毛虫 叶足纲：有伪足，溶组织内阿米巴&#x2F;结肠内
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-03-23 00:00" pubdate>
+              2026-03-23
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AF%BE%E5%86%85/" class="category-chain-item">课内</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E8%AF%BE%E5%86%85/%E5%A4%A7%E4%B8%89%E4%B8%8B/" class="category-chain-item">大三下</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E8%AF%BE%E5%86%85/%E5%A4%A7%E4%B8%89%E4%B8%8B/%E7%97%85%E5%8E%9F%E5%85%8D%E7%96%AB2/" class="category-chain-item">病原免疫2</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2026/03/16/%E7%BA%BF%E8%99%AB/" target="_self">
+          线虫nematode
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2026/03/16/%E7%BA%BF%E8%99%AB/" target="_self">
+        <div>
+          属线形动物门线虫纲（Class Nematoda），种类繁多，大多营自生生活，少数营寄生生活，能寄生人体并致病的极少
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-03-16 00:00" pubdate>
+              2026-03-16
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AF%BE%E5%86%85/" class="category-chain-item">课内</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E8%AF%BE%E5%86%85/%E5%A4%A7%E4%B8%89%E4%B8%8B/" class="category-chain-item">大三下</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E8%AF%BE%E5%86%85/%E5%A4%A7%E4%B8%89%E4%B8%8B/%E7%97%85%E5%8E%9F%E5%85%8D%E7%96%AB2/" class="category-chain-item">病原免疫2</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2026/03/09/my-lab-site%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/" target="_self">
+          lab-site项目总结
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2026/03/09/my-lab-site%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/" target="_self">
+        <div>
+          my-lab-site项目总结：目标网站 -&gt; 问ai -&gt; 部署  目的网站：lec网站  那天看到lec的网站觉得太美丽太炫酷了，于是一时兴起也想做一个类似的  然后就是漫长的调ai过程前端学习路线 问ai想要做一个网站需要用到哪些工具：HTML、CSS、JavaScript、TypeScript、React、Next.js、GSAP、Three.js、WebGL、Locomoti
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-03-09 19:40" pubdate>
+              2026-03-09
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AE%B0%E5%BD%95/" class="category-chain-item">记录</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2026/03/09/%E7%BB%A6%E8%99%AB/" target="_self">
+          绦虫cestodes
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2026/03/09/%E7%BB%A6%E8%99%AB/" target="_self">
+        <div>
+          绦虫属于扁形动物门，主要分为多节绦虫亚纲，包括假叶目和圆叶目，寄生于人体肠道。成虫形态细长，具吸附器官，生殖系统为雌雄同体。生活史中需有终宿主和中间宿主，幼虫寄生在各组织器官中可引起严重病症，如囊虫病。防治措施包括驱虫治疗、手术摘除和加强卫生教育。
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-03-09 00:00" pubdate>
+              2026-03-09
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AF%BE%E5%86%85/" class="category-chain-item">课内</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E8%AF%BE%E5%86%85/%E5%A4%A7%E4%B8%89%E4%B8%8B/" class="category-chain-item">大三下</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E8%AF%BE%E5%86%85/%E5%A4%A7%E4%B8%89%E4%B8%8B/%E7%97%85%E5%8E%9F%E5%85%8D%E7%96%AB2/" class="category-chain-item">病原免疫2</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2026/03/02/%E5%90%B8%E8%99%AB/" target="_self">
+          吸虫Trematodes
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2026/03/02/%E5%90%B8%E8%99%AB/" target="_self">
+        <div>
+          吸虫属于扁形动物门，具有复杂的生活史和多种寄生宿主。成虫通常为雌雄同体，具有发达的生殖系统。主要的吸虫包括肺吸虫、血吸虫等，导致多种人兽共患病，症状包括咳血、腹痛等。防治措施包括药物治疗、改善饮食习惯和加强卫生管理。
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-03-02 00:00" pubdate>
+              2026-03-02
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AF%BE%E5%86%85/" class="category-chain-item">课内</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E8%AF%BE%E5%86%85/%E5%A4%A7%E4%B8%89%E4%B8%8B/" class="category-chain-item">大三下</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E8%AF%BE%E5%86%85/%E5%A4%A7%E4%B8%89%E4%B8%8B/%E7%97%85%E5%8E%9F%E5%85%8D%E7%96%AB2/" class="category-chain-item">病原免疫2</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2026/02/25/docker%E5%AD%A6%E4%B9%A0/" target="_self">
+          docker学习
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2026/02/25/docker%E5%AD%A6%E4%B9%A0/" target="_self">
+        <div>
+          基础知识操作系统分成内核和用户空间 User space（用户空间）和 Kernel space（内核空间） Kernel space：系统程序运行；User space：用户程序运行 隔离确保内核安全 Kernel space比User space权限更高，User space想要调用系统资源需要通过系统接口   top查看CPU时间分配：%Cpu(s)那一行 us：CPU在用户空间的时间占比
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-02-25 16:08" pubdate>
+              2026-02-25
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AE%B0%E5%BD%95/" class="category-chain-item">记录</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2026/02/23/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%B5%81%E7%A8%8B%E8%AE%B0%E5%BD%95/" target="_self">
+          博客搭建&amp;优化记录
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2026/02/23/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%B5%81%E7%A8%8B%E8%AE%B0%E5%BD%95/" target="_self">
+        <div>
+          搭建step1: 准备工作Node.js安装12345678910111213141516171819202122# 安装fnm：管理node.js版本curl -o- https://fnm.vercel.app/install | bash# 安装node.jsfnm install 22# 配置环境变量nano ~/.zshrc## 在最上面/最下面添加下面这行代码：注意避开conda的in
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-02-23 20:34" pubdate>
+              2026-02-23
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AE%B0%E5%BD%95/" class="category-chain-item">记录</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/05/06/%E7%90%86%E5%B7%A5%E4%BF%A1%EF%BC%88%E4%B8%8A%EF%BC%89%E5%BC%80%E5%8D%B7%E4%BB%A3%E7%A0%812/" target="_self">
+          理工信（上）开卷代码
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2025/05/06/%E7%90%86%E5%B7%A5%E4%BF%A1%EF%BC%88%E4%B8%8A%EF%BC%89%E5%BC%80%E5%8D%B7%E4%BB%A3%E7%A0%812/" target="_self">
+        <div>
+          写在开头 本笔记以非博雅班的课程内容为主体，理论与代码内容大多来自PPT，一些内容来自ai生成。  代码和理论部分感谢踏实勤劳又肯干的kimi，忙前忙后为我讲解生统部分的基础概念，还为我提供例子，进行代码运行与计算，感谢他的不离不弃；同时代码部分也需要感谢deepseek，虽然我也忘了哪些部分是他写的；也感谢不登录不给问的豆包，谢谢他的陪伴与支持。   概率论基础事件与运算 样本空间 (sampl
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-05-06 00:00" pubdate>
+              2025-05-06
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AF%BE%E5%86%85/" class="category-chain-item">课内</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E8%AF%BE%E5%86%85/%E5%A4%A7%E4%BA%8C%E4%B8%8B/" class="category-chain-item">大二下</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E8%AF%BE%E5%86%85/%E5%A4%A7%E4%BA%8C%E4%B8%8B/%E7%90%86%E5%B7%A5%E4%BF%A1%EF%BC%88%E4%B8%8A%EF%BC%89/" class="category-chain-item">理工信（上）</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+
+
+  <nav aria-label="navigation">
+    <span class="pagination" id="pagination">
+      <a class="extend prev" rel="prev" href="/"><i class="iconfont icon-arrowleft"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    </span>
+  </nav>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> <div style="font-size: 0.85rem"> <span id="g-total-word-id">Getting word count...</span> </div> <div class="total-posts" style="font-size: 0.85rem; margin: 0.15rem 0.15rem;"> <i class="fas fa-file-alt"></i> <span id="g-total-posts-id">Getting total posts...</span> </div>
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  <script type="text/javascript">
+  document.getElementById("g-total-word-id").innerHTML = "全站总字数 101k";
+</script>
+<script type="text/javascript">
+  document.getElementById('g-total-posts-id').textContent ="全站总文章数 18";
+</script>
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

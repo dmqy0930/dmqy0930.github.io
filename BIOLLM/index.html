@@ -1,0 +1,2547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生物大模型学习监督面板 | 15周计划</title>
+<style>
+  :root {
+    /* === 浅色模式 (Fluid 日间) === */
+    --bg: #f0f2f5;
+    --surface: #ffffff;
+    --border: #d0d5dd;
+    --text: #1e293b;
+    --text-secondary: #64748b;
+    --accent: #38bdf8;              /* 保留原始深蓝强调 */
+    --accent-dim: #e0f2fe;          /* 浅蓝背景 */
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --purple: #8b5cf6;
+    --code-bg: #f1f5f9;
+    --code-text: #1e293b;
+    --formula-text: #0c4a6e;
+    --sidebar-header-bg: linear-gradient(135deg, #0c4a6e 0%, #0369a1 100%);
+    --sidebar-header-text: #e0f2fe;
+    --sidebar-header-sub: #7dd3fc;
+    --tag-bg: #f1f5f9;
+  }
+
+  /* === 深色 (prefers-color-scheme / Fluid 暗色) === */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --border: #334155;
+      --text: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --accent: #38bdf8;
+      --accent-dim: #0c4a6e;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --purple: #a78bfa;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --formula-text: var(--accent);
+      --sidebar-header-bg: linear-gradient(135deg, #0c4a6e 0%, #1e293b 100%);
+      --sidebar-header-text: #e2e8f0;
+      --sidebar-header-sub: #94a3b8;
+      --tag-bg: #0f172a;
+    }
+  }
+
+  /* Fluid 手动切换暗色 → data-theme 属性 */
+  html[data-theme="dark"] {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --border: #334155;
+    --text: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --accent: #38bdf8;
+    --accent-dim: #0c4a6e;
+    --success: #34d399;
+    --warning: #fbbf24;
+    --danger: #f87171;
+    --purple: #a78bfa;
+    --code-bg: #0f172a;
+    --code-text: #e2e8f0;
+    --formula-text: var(--accent);
+    --sidebar-header-bg: linear-gradient(135deg, #0c4a6e 0%, #1e293b 100%);
+    --sidebar-header-text: #e2e8f0;
+    --sidebar-header-sub: #94a3b8;
+    --tag-bg: #0f172a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6;
+    display: flex; height: 100vh; overflow: hidden;
+  }
+
+  /* === SIDEBAR === */
+  .sidebar {
+    width: 300px; min-width: 300px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+  .sidebar-header {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--sidebar-header-bg);
+    flex-shrink: 0;
+  }
+  .sidebar-header h1 { color: var(--sidebar-header-text); }
+  .sidebar-header .sub { color: var(--sidebar-header-sub); }
+  .sidebar-header h1 { font-size: 1rem; font-weight: 700; color: var(--text); }
+  .sidebar-header .sub { font-size: 0.65rem; color: var(--text-secondary); margin-top: 2px; }
+
+  .sidebar-timeline {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    padding: 4px 0;
+  }
+  .sidebar-timeline::-webkit-scrollbar { width: 4px; }
+  .sidebar-timeline::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* Timeline */
+  .tl-phase {
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 16px 6px 22px;
+    font-size: 0.62rem; font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .tl-phase:first-child { padding-top: 8px; }
+  .tl-phase .tl-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); flex-shrink: 0;
+  }
+
+  .tl-node {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 5px 16px 5px 14px; cursor: pointer;
+    font-size: 0.72rem; color: var(--text-secondary);
+    transition: all 0.15s; position: relative;
+  }
+  .tl-node:hover { background: rgba(255,255,255,0.03); color: var(--text); }
+
+  /* Timeline vertical line + dot */
+  .tl-node .tl-marker {
+    display: flex; flex-direction: column; align-items: center;
+    width: 16px; flex-shrink: 0; padding-top: 3px;
+  }
+  .tl-node .tl-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 2px solid var(--border); background: var(--surface);
+    flex-shrink: 0; z-index: 1; transition: all 0.2s;
+  }
+  .tl-node .tl-line {
+    width: 2px; flex: 1; min-height: 100%;
+    background: var(--border);
+    margin-top: 2px;
+  }
+  .tl-node:last-child .tl-line { display: none; }
+
+  .tl-node.done .tl-dot {
+    background: var(--success); border-color: var(--success);
+    box-shadow: 0 0 6px rgba(52,211,153,0.4);
+  }
+  .tl-node.done .tl-text { color: var(--text-secondary); }
+  .tl-node.done .tl-text::after { content: ' ✓'; color: var(--success); font-size: 0.6rem; }
+
+  .tl-node.current .tl-dot {
+    background: var(--surface); border-color: var(--accent);
+    box-shadow: 0 0 8px rgba(56,189,248,0.5);
+  }
+  .tl-node.current .tl-text { color: var(--accent); font-weight: 600; }
+
+  .tl-node.active {
+    background: var(--accent-dim);
+    border-radius: 0 6px 6px 0;
+    margin-right: 4px;
+  }
+  .tl-node.active .tl-dot {
+    background: var(--accent); border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(56,189,248,0.6);
+  }
+  .tl-node.active .tl-text { color: var(--accent); font-weight: 600; }
+
+  .tl-text { line-height: 1.3; }
+  .tl-text .tl-title { display: block; }
+  .tl-text .tl-sub { display: block; font-size: 0.6rem; color: var(--text-secondary); font-weight: 400; }
+
+  .sidebar-stats {
+    padding: 10px 16px; border-top: 1px solid var(--border);
+    font-size: 0.68rem; color: var(--text-secondary);
+    flex-shrink: 0;
+    display: flex; justify-content: space-between;
+  }
+  .sidebar-stats span { color: var(--accent); font-weight: 600; }
+
+  /* === MAIN CONTENT === */
+  .content {
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    padding: 0; position: relative;
+  }
+  .content::-webkit-scrollbar { width: 6px; }
+  .content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* Stats trigger zone — invisible hover area at top */
+  .stats-wrapper {
+    position: sticky; top: 0; z-index: 20;
+  }
+  .stats-trigger {
+    height: 18px; width: 100%;
+    background: var(--accent-dim);
+    transition: background 0.2s;
+  }
+  .stats-trigger:hover {
+    background: rgba(56,189,248,0.18);
+  }
+  .stats-trigger:hover + .stats-bar,
+  .stats-bar:hover {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Stats Bar — hidden by default, overlays content below */
+  .stats-bar {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    padding: 16px 24px;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    position: absolute; top: 18px; left: 0; right: 0;
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+    pointer-events: none;
+  }
+
+  .stat-card {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px; text-align: center;
+  }
+  .stat-card .value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+  .stat-card .label { font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px; }
+
+  /* Content area */
+  .content-inner { max-width: 960px; margin: 0 auto; padding: 24px; }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    font-size: 0.7rem; color: var(--text-secondary);
+    margin-bottom: 16px; display: flex; align-items: center; gap: 4px;
+  }
+  .breadcrumb span { color: var(--accent); }
+
+  /* Week Cards — single week view */
+  .week-detail { max-width: 900px; }
+  .week-detail .week-card { border-color: var(--accent-dim); }
+
+  /* Week Grid (for all-weeks view fallback) */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 16px;
+  }
+  .week-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+  .week-card:hover { border-color: var(--accent-dim); }
+  .week-card.completed { border-color: var(--success); opacity: 0.85; }
+  .week-card.current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-dim); }
+
+  .week-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .week-num {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .week-title { font-size: 1.1rem; font-weight: 600; margin-top: 2px; }
+  .week-status {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+  }
+  .week-status.done { background: var(--success); border-color: var(--success); color: #000; }
+
+  /* Sections inside card */
+  .card-section { margin-bottom: 12px; }
+  .card-section h4 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .card-section h4 .icon { font-size: 0.85rem; }
+
+  .tag-list { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--tag-bg);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .tag.math { color: var(--purple); border-color: var(--purple); background: rgba(111,66,193,0.08); }
+  .tag.exp { color: #b8860b; border-color: var(--warning); background: rgba(255,193,7,0.1); }
+  .tag.risk { color: var(--danger); border-color: var(--danger); background: rgba(220,53,69,0.06); }
+
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 0.7rem;
+    overflow-x: auto;
+    white-space: pre;
+    color: var(--code-text);
+    max-height: 160px;
+    overflow-y: auto;
+    line-height: 1.4;
+  }
+  .formula {
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-dim);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.8rem;
+    text-align: center;
+    color: var(--formula-text);
+    overflow-x: auto;
+  }
+
+  /* Checklist */
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 4px 0;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 4px 6px;
+    transition: background 0.15s;
+  }
+  .checklist li:hover { background: rgba(255,255,255,0.03); }
+  .check-box {
+    width: 16px; height: 16px;
+    border: 2px solid var(--border);
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    font-size: 0.6rem;
+    color: transparent;
+  }
+  .check-box.checked {
+    background: var(--success);
+    border-color: var(--success);
+    color: #000;
+  }
+  .check-text.done { text-decoration: line-through; color: var(--text-secondary); }
+
+  /* Paper link */
+  .paper-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    color: var(--accent); text-decoration: none;
+    font-size: 0.75rem; font-weight: 500;
+  }
+  .paper-link:hover { text-decoration: underline; }
+
+  /* Daily Tasks */
+  .daily-toggle {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 12px;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-dim);
+    border-radius: 6px;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    width: 100%;
+    text-align: left;
+    transition: all 0.15s;
+    margin-bottom: 8px;
+  }
+  .daily-toggle:hover { background: rgba(56,189,248,0.15); }
+  .daily-toggle .arrow { transition: transform 0.2s; font-size: 0.6rem; }
+  .daily-toggle.open .arrow { transform: rotate(90deg); }
+
+  .daily-container { display: none; margin-bottom: 12px; }
+  .daily-container.open { display: block; }
+
+  .day-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 6px;
+    transition: border-color 0.15s;
+  }
+  .day-card:hover { border-color: var(--accent-dim); }
+  .day-card .day-header {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .day-card .day-num {
+    background: var(--accent-dim);
+    color: var(--accent);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+  .day-card .day-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .day-card .day-section {
+    margin-bottom: 6px;
+    font-size: 0.72rem;
+  }
+  .day-card .day-section .day-label {
+    color: var(--accent);
+    font-weight: 600;
+    margin-right: 4px;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+  }
+  .day-card .day-section .day-text {
+    color: var(--text-secondary);
+  }
+  .day-card .day-risk {
+    font-size: 0.68rem;
+    color: var(--danger);
+    background: rgba(248,113,113,0.06);
+    border-left: 2px solid var(--danger);
+    padding: 4px 8px;
+    border-radius: 0 3px 3px 0;
+    margin-top: 6px;
+  }
+  .day-checklist { list-style: none; }
+  .day-checklist li {
+    display: flex; align-items: flex-start; gap: 6px;
+    font-size: 0.7rem; color: var(--text-secondary);
+    padding: 2px 0;
+    cursor: pointer;
+    border-radius: 3px;
+    padding: 2px 4px;
+    transition: background 0.15s;
+  }
+  .day-checklist li:hover { background: rgba(255,255,255,0.03); }
+  .day-check-box {
+    width: 13px; height: 13px;
+    border: 1.5px solid var(--border);
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.5rem;
+    color: transparent;
+    transition: all 0.15s;
+  }
+  .day-check-box.checked { background: var(--success); border-color: var(--success); color: #000; }
+
+  /* Track Selector (in sidebar) */
+  .track-selector {
+    display: flex; gap: 4px; padding: 8px 12px;
+    background: var(--bg); border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .track-btn {
+    flex: 1; padding: 6px 10px; border-radius: 14px; border: 1px solid var(--border);
+    background: transparent; color: var(--text-secondary);
+    cursor: pointer; font-size: 0.65rem; font-weight: 500;
+    transition: all 0.2s; text-align: center; white-space: nowrap;
+  }
+  .track-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+  .track-btn:hover:not(.active) { border-color: var(--accent); color: var(--text); }
+
+  /* Risk callout */
+  .risk-callout {
+    font-size: 0.72rem;
+    color: var(--danger);
+    background: rgba(248,113,113,0.06);
+    border-left: 2px solid var(--danger);
+    padding: 6px 10px;
+    border-radius: 0 4px 4px 0;
+    margin-top: 6px;
+  }
+
+  /* Reset button */
+  .reset-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.15s;
+  }
+  .reset-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+  .footer {
+    text-align: center; padding: 24px;
+    color: var(--text-secondary); font-size: 0.7rem;
+  }
+
+  /* Homepage */
+  .homepage { max-width: 800px; margin: 0 auto; }
+  .homepage-hero {
+    text-align: center; padding: 40px 24px 32px;
+    border-bottom: 1px solid var(--border); margin-bottom: 28px;
+  }
+  .homepage-hero h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; }
+  .homepage-hero .hero-sub { font-size: 0.85rem; color: var(--text-secondary); }
+  .homepage-hero .hero-stats {
+    display: flex; justify-content: center; gap: 32px; margin-top: 20px;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat .hs-val { font-size: 2rem; font-weight: 700; color: var(--accent); }
+  .hero-stat .hs-label { font-size: 0.7rem; color: var(--text-secondary); }
+
+  /* Track cards */
+  .track-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+  .track-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; cursor: pointer; transition: all 0.2s;
+  }
+  .track-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .track-card.active-track { border-color: var(--accent-dim); }
+  .track-card .tc-icon { font-size: 1.8rem; margin-bottom: 8px; }
+  .track-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+  .track-card .tc-desc { font-size: 0.72rem; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.5; }
+  .track-card .tc-bar {
+    height: 4px; background: var(--border); border-radius: 2px; margin-bottom: 6px;
+    overflow: hidden;
+  }
+  .track-card .tc-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s; }
+  .track-card .tc-stat { font-size: 0.68rem; color: var(--text-secondary); }
+
+  /* Phase overview */
+  .phase-overview { margin-bottom: 28px; }
+  .phase-overview h3 { font-size: 0.85rem; font-weight: 600; margin-bottom: 12px; }
+  .phase-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 12px; border-radius: 6px;
+    margin-bottom: 4px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .phase-row:hover { background: rgba(255,255,255,0.03); }
+  .phase-row .pr-label {
+    font-size: 0.72rem; font-weight: 500;
+    width: 160px; flex-shrink: 0; color: var(--text-secondary);
+  }
+  .phase-row .pr-bar {
+    flex: 1; height: 6px; background: var(--border); border-radius: 3px;
+    overflow: hidden;
+  }
+  .phase-row .pr-bar-fill {
+    height: 100%; background: var(--success); border-radius: 3px;
+    transition: width 0.4s;
+  }
+  .phase-row .pr-pct {
+    font-size: 0.68rem; color: var(--text-secondary);
+    width: 36px; text-align: right; flex-shrink: 0;
+  }
+
+  /* Quick nav */
+  .quick-nav {
+    text-align: center; padding: 16px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .quick-nav p { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 8px; }
+  .quick-nav-btn {
+    display: inline-block; padding: 8px 20px;
+    background: var(--accent); color: #000;
+    border-radius: 20px; font-size: 0.78rem; font-weight: 600;
+    cursor: pointer; border: none;
+    transition: all 0.2s;
+  }
+  .quick-nav-btn:hover { box-shadow: 0 0 16px rgba(56,189,248,0.3); }
+
+  @media (max-width: 768px) {
+    .track-cards { grid-template-columns: 1fr; }
+    .homepage-hero .hero-stats { gap: 16px; flex-wrap: wrap; }
+    .phase-row .pr-label { width: 100px; font-size: 0.65rem; }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .sidebar { width: 240px; min-width: 240px; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); padding: 10px 14px; }
+    .week-grid { grid-template-columns: 1fr; }
+    .content-inner { padding: 16px; }
+  }
+  @media (max-width: 500px) {
+    .sidebar { display: none; }
+  }
+
+  /* Math rendering fallback */
+  .math { font-family: 'Times New Roman', serif; font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- === SIDEBAR === -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h1>生物大模型学习面板</h1>
+    <div class="sub" id="sidebarSubtitle">Phase 1 + Phase 2</div>
+  </div>
+
+  <div class="track-selector" id="trackSelector">
+    <button class="track-btn active" data-track="bio">🧬 生物大模型</button>
+    <button class="track-btn" data-track="worldmodel">🌍 世界模型</button>
+  </div>
+
+  <div class="sidebar-timeline" id="sidebarTimeline"></div>
+
+  <div class="sidebar-stats">
+    <span id="sidebarCompleted">0/14</span> 周完成
+    <span id="sidebarPct">0%</span>
+  </div>
+</div>
+
+<!-- === MAIN CONTENT === -->
+<div class="content" id="mainContent">
+  <div class="stats-wrapper">
+    <div class="stats-trigger"></div>
+    <div class="stats-bar">
+    <div class="stat-card">
+      <div class="value" id="stat-progress">0%</div>
+      <div class="label">总进度</div>
+    </div>
+    <div class="stat-card">
+      <div class="value" id="stat-completed">0/14</div>
+      <div class="label">已完成周数</div>
+    </div>
+    <div class="stat-card">
+      <div class="value" id="stat-items">0/0</div>
+      <div class="label">验收项通过</div>
+    </div>
+    <div class="stat-card">
+      <div class="value" id="stat-current">—</div>
+      <div class="label">当前进度</div>
+    </div>
+  </div>
+  </div><!-- /stats-wrapper -->
+
+  <div class="content-inner" id="contentInner"></div>
+
+  <div class="footer">
+    每周一个可运行脚本 · 一张结果图 · 一段实验日志 &nbsp;|&nbsp; 进度自动保存到 localStorage
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+let currentTrack = 'bio';
+
+const weeksBioML = [
+  {
+    id: 2, phase: 'foundation',
+    title: 'PyTorch 核心机制',
+    subtitle: '计算图与训练循环',
+    points: ['Tensor / broadcasting', 'autograd（反向传播机制）', 'nn.Module / forward', 'loss + optimizer（SGD / Adam）'],
+    experiment: `import torch
+torch.manual_seed(42)
+x = torch.randn(100, 10)
+y = (x.sum(dim=1) > 0).long()
+model = torch.nn.Sequential(
+    torch.nn.Linear(10, 32),
+    torch.nn.ReLU(),
+    torch.nn.Linear(32, 2)
+)
+opt = torch.optim.Adam(model.parameters(), lr=1e-3)
+loss_fn = torch.nn.CrossEntropyLoss()
+for epoch in range(50):
+    logits = model(x)
+    loss = loss_fn(logits, y)
+    opt.zero_grad()
+    loss.backward()
+    opt.step()`,
+    formulas: ['∂L/∂W 通过 autograd 自动计算'],
+    criteria: ['能解释 ∂L/∂W 如何通过 autograd 自动计算', 'loss 收敛到 < 0.1'],
+    risks: ['只会调用 API，不理解计算图 → 后续 Transformer 无法 debug'],
+    paper: null,
+    criteriaAnswers: [
+      'autograd 追踪每个 requires_grad=True 的 tensor 上的所有操作，构建有向无环计算图。调用 backward() 时，从 loss 节点出发沿图反向传播，链式法则自动计算每个参数的 ∂L/∂W。图中的每个节点(.grad_fn)记录了自己对应的导数规则。',
+      'loss 收敛到 < 0.1 的验证方法: ①打印最后5个epoch的loss值，全部 < 0.1 ②画出loss曲线呈平滑下降趋势 ③如loss不降→检查lr是否合理(1e-3~1e-4)或数据是否随机。'
+    ],
+    dailyTasks: [
+      {
+        day: 1, title: 'Tensor 与 Broadcasting',
+        points: ['Tensor 本质: n维数组 + dtype + device', 'broadcasting 规则: 右对齐、维度为1可扩展', 'view / reshape / permute / sum(dim=?)'],
+        tasks: ['a=torch.randn(4,1); b=torch.randn(1,3); c=a+b 手写推导c.shape', '练习 torch.sum(x, dim=0) vs dim=1 的shape变化'],
+        criteria: ['不运行代码能判断任意 broadcast 结果 shape', '能解释 broadcasting 为什么不会复制内存(利用stride)'],
+        risks: ['把 broadcast 当"复制"→ 后续 attention 维度全错']
+      },
+      {
+        day: 2, title: '计算图 (Computational Graph)',
+        points: ['动态计算图 define-by-run', 'Tensor 的 .grad_fn 和 .requires_grad 属性'],
+        tasks: ['x=torch.tensor(2.0,requires_grad=True); y=x**2+3*x; y.backward(); print(x.grad)', '手推导: dy/dx=2x+3=7, 与代码对比'],
+        criteria: ['能解释每一步的 grad 如何"链式传递"', '能画出 y=x²+3x 的计算图(节点+边)'],
+        risks: ['不理解图结构 → 无法 debug 梯度为None']
+      },
+      {
+        day: 3, title: 'Autograd 机制（核心）',
+        points: ['反向传播 = 链式法则自动执行', '梯度累加! loss.backward() 不清零而是叠加'],
+        tasks: ['x=torch.tensor(1.0,requires_grad=True); y=x*2; y.backward(); y=x*3; y.backward(); print(x.grad)', '解释: 为什么结果是5(2+3)而不是3'],
+        criteria: ['能解释 zero_grad() 的必要性: 梯度是累加的,不清零会混入上一batch的梯度', '能说明 backward() 中 retain_graph 的作用'],
+        risks: ['忘记清梯度 → loss 震荡(极常见, 第1 debug目标)']
+      },
+      {
+        day: 4, title: 'nn.Module 机制',
+        points: ['__init__ vs forward 的分工', 'parameter 注册机制: 只有 nn.Parameter 或 nn.Module 子对象会被自动追踪'],
+        tasks: ['实现 class MLP(nn.Module): fc=nn.Linear(10,2); forward(x)=self.fc(x)', '验证 list(model.parameters()) 正确', '故意把 layer 写在 forward 里, 观察参数列表为空'],
+        criteria: ['能解释: 为什么不能把 layer 写在 forward 里(每次forward重建→参数不持久→optimizer看不到)'],
+        risks: ['参数未注册 → optimizer.step() 什么都不更新']
+      },
+      {
+        day: 5, title: 'Loss 与 Optimizer 本质',
+        points: ['CrossEntropyLoss = softmax + log + NLLLoss', 'SGD vs Adam: 方向 vs 自适应步长', 'Adam 的动量 + 自适应学习率直觉'],
+        tasks: ['手动计算一个小batch的CE loss(用torch.nn.functional.softmax + torch.log + F.nll_loss)', '对比 SGD 和 Adam 在相同初始化下的收敛速度'],
+        criteria: ['能解释 loss 如何影响梯度方向', '能解释 Adam 的两个 β 参数(β1动量, β2自适应)'],
+        risks: ['把 optimizer 当"黑盒"→ 调参全靠运气']
+      },
+      {
+        day: 6, title: '完整训练循环逐行解析',
+        points: ['1.forward构建图 → 2.backward传播梯度 → 3.参数更新', 'loss.backward() 背后: 从loss节点反向遍历计算图,对每个requires_grad的叶子节点累加.grad'],
+        tasks: ['对已有训练循环代码逐行加注释(每行解释发生了什么)', '在 loss.backward() 前后打印 model.fc[0].weight.grad 观察变化'],
+        criteria: ['能逐行解释: forward → graph构建 → backward传播 → 参数更新 → zero_grad'],
+        risks: ['只是"代码跑通了"但不理解每行 → 后面所有bug都无法定位']
+      },
+      {
+        day: 7, title: 'Debug 能力训练（最重要的一天）',
+        points: ['通过loss曲线诊断问题', '常见故障模式: loss=NaN / loss不降 / loss震荡 / loss先降后升'],
+        tasks: ['故意不调zero_grad→观察loss曲线(震荡)', '故意设lr=1→观察loss曲线(NaN或爆炸)', '故意设lr=1e-5→观察loss曲线(几乎不降)'],
+        criteria: ['能通过loss曲线形状判断: 梯度累加/学习率过大/学习率过小'],
+        risks: ['不训练debug能力 → 后面Transformer/ESM出问题完全无法定位']
+      }
+    ],
+    risks: ['不理解 attention → 后续所有大模型都是黑箱'],
+    paper: 'Vaswani et al., 2017, "Attention Is All You Need"',
+    paperUrl: 'https://arxiv.org/abs/1706.03762',
+    resources: [
+      { label: 'Attention Is All You Need 论文', url: 'https://arxiv.org/abs/1706.03762' },
+      { label: 'The Illustrated Transformer', url: 'https://jalammar.github.io/illustrated-transformer/' }
+    ]
+  },
+  {
+    id: 3, phase: 'foundation',
+    title: 'Transformer 核心',
+    subtitle: '必须理解 Attention：加权平均',
+    points: ['self-attention = 加权平均', 'QKᵀ = 相似度矩阵', '√dₖ = 数值稳定性', 'multi-head = 多子空间'],
+    experiment: `class SelfAttention(torch.nn.Module):
+    def __init__(self, d):
+        super().__init__()
+        self.q = torch.nn.Linear(d, d)
+        self.k = torch.nn.Linear(d, d)
+        self.v = torch.nn.Linear(d, d)
+    def forward(self, x):
+        Q = self.q(x); K = self.k(x); V = self.v(x)
+        attn = torch.softmax(
+            Q @ K.transpose(-2,-1) / (x.size(-1)**0.5),
+            dim=-1
+        )
+        return attn @ V`,
+    formulas: ['Attention(Q,K,V) = softmax(QKᵀ/√dₖ)V', 'Var(q·k) ≈ d_k, 不除 → softmax饱和 → 梯度消失'],
+    criteria: ['能解释为什么要除以 √dₖ（数值稳定性：防止softmax饱和导致梯度消失）', '能画出 attention matrix 热力图并解释含义', 'overfit 小数据（20条→100% accuracy）证明模型有学习能力'],
+    criteriaAnswers: [
+      '除以√dₖ的数学原因: 假设q和k的每个分量独立且均值为0方差为1,则q·k的方差=d_k。当d_k很大(如512)时内积值很大,softmax后趋近one-hot(梯度≈0)。除以√dₖ将方差缩放到1,softmax保持适度分布,梯度正常流动。不除→梯度消失→模型不学习。',
+      'Attention matrix [L,L]: 第i行第j列=位置i对位置j的注意力权重。理想情况: 对角线附近权重大(局部依赖),远处权重小。如果全均匀→模型没学到任何模式。热力图可用plt.imshow(attn[0].detach())绘制。',
+      'Overfit小数据: 用20条固定数据训练,50个epoch内train accuracy须达100%。如果达不到→模型/数据pipeline有bug。这是验证模型"至少能学习"的最强信号。'
+    ],
+    risks: ['不理解 attention = 加权平均 → 后面所有大模型都是黑箱', '忽略 causal mask → 语言模型作弊(看到未来)', '代码跑通loss下降但不理解为什么→最危险状态'],
+    paper: 'Vaswani et al., 2017, "Attention Is All You Need"',
+    paperUrl: 'https://arxiv.org/abs/1706.03762',
+    resources: [
+      { label: 'Attention Is All You Need 论文', url: 'https://arxiv.org/abs/1706.03762', note: '重点: Section 3.2 Attention公式推导。难点: 理解multi-head的维度变换' },
+      { label: 'The Illustrated Transformer', url: 'https://jalammar.github.io/illustrated-transformer/', note: '重点: 可视化Q/K/V的计算过程。难点: 理解encoder-decoder attention与self-attention的区别' }
+    ],
+    resourceNotes: '这一周的关键不是"跑通self-attention代码",而是从矩阵运算角度理解attention=加权平均。如果你能不看代码手写attention公式并解释每个维度的含义,才算真正过关。',
+    dailyTasks: [
+      {
+        day: 1, title: '从矩阵角度理解 Attention',
+        points: ['QKᵀ = 相似度矩阵: 每个元素是query_i与key_j的内积', 'softmax(dim=-1) = 将每行转为概率分布', 'Attention = 加权平均: 用attention权重对V加权求和'],
+        tasks: ['手写: Q,K,V各自的shape=[B,L,d], QKᵀ的shape=?', '用np.random模拟Q,K,V,手动计算softmax(QKᵀ/√d)V并验证shape'],
+        criteria: ['能解释: "attention = 加权平均"的完整计算过程', '不运行代码就能写出: attn shape = [B, L, L], output shape = [B, L, d]'],
+        risks: ['把attention当"magic box"→ 后续multi-head/cross-attention完全无法理解']
+      },
+      {
+        day: 2, title: '为什么除以 √dₖ（关键理解）',
+        points: ['点积方差分析: Var(q·k) = d_k(当q,k各分量独立且var=1)', '不除→内积值大→softmax输出接近one-hot→梯度≈0', '除以√dₖ→内积方差≈1→softmax保持适度分布'],
+        tasks: ['实验: 分别用 d=16/64/256, 对比除以与不除以√d时 softmax 的熵', '画出 softmax 输出分布: 不除→集中在最大值, 除以→分布更均匀'],
+        criteria: ['能用"数值稳定性"和"梯度消失"解释除以√dₖ的必要性'],
+        risks: ['只记公式不管理由 → 面试被问"为什么不用除以d"直接卡住']
+      },
+      {
+        day: 3, title: '手写 Self-Attention + 扩展验证',
+        points: ['Linear(d,d) 将输入投影到 Q/K/V 空间', 'attn @ V = 每个位置用attention权重混合所有位置的V'],
+        tasks: ['实现 SelfAttention 并打印: Q.shape, K.shape, V.shape, attn.shape, output.shape', '用 torch.allclose 验证: output 的每行 = 对 V 的加权平均(加权系数=attn[i])'],
+        criteria: ['能从shape推断每个tensor的含义', '能画出 attention matrix 热力图(plt.imshow)'],
+        risks: ['shape不匹配时不知道从哪里debug']
+      },
+      {
+        day: 4, title: 'Causal Mask 机制（极重要）',
+        points: ['语言模型: 位置t只能看到 ≤t 的信息', 'causal mask = 上三角为 -inf(softmax后→0)', '不mask→模型作弊: 用未来词预测当前词→训练loss低但推理无用'],
+        tasks: ['实现 mask = torch.triu(torch.ones(L,L)*float("-inf"), diagonal=1)', '对比 mask vs no-mask 的 attention matrix 差异', '验证: masked attention 的 attn[i, j>i] ≈ 0'],
+        criteria: ['能解释: 为什么语言模型必须 causal mask, 而分类模型不需要'],
+        risks: ['忽略 mask → 模型学到"用未来信息"→ loss很低但推理完全没用(信息泄露)']
+      },
+      {
+        day: 5, title: 'Multi-Head Attention',
+        points: ['多子空间: 不同head关注不同模式(局部/全局/语法/语义)', '实现: split d→(n_heads, d_head), 每个head独立attention, 最后concat'],
+        tasks: ['实现简化multi-head: Q,K,V各split成n_heads份, 每份独立做attention, concat结果', '验证: multi-head output shape = [B, L, d](与输入相同)'],
+        criteria: ['能解释: 为什么不是一个大attention就够(单个head只能捕获一种pattern)'],
+        risks: ['split/concat维度搞错 → shape对不上']
+      },
+      {
+        day: 6, title: 'Transformer Block 完整实现',
+        points: ['结构: attention → residual add → LayerNorm → FFN → residual add → LayerNorm', 'residual: 解决深层梯度消失, 让信号直通', 'LayerNorm: 在特征维度归一化(不是batch维)'],
+        tasks: ['实现一个完整的 TransformerEncoderBlock: attention+residual+LN+FFN+residual+LN', '验证: input shape = output shape', '测试: 输入随机tensor, 确认forward不报错且shape正确'],
+        criteria: ['能画出一个Transformer Block的完整数据流图'],
+        risks: ['residual维度不一致(最常见)→ add失败', 'LayerNorm在错误的维度上做→归一化无效']
+      },
+      {
+        day: 7, title: '综合实验: Mini Transformer 过拟合测试',
+        points: ['终极验证: 模型是否真正"有学习能力"', '过拟合小数据 = 排除数据问题, 纯粹验证模型实现正确性'],
+        tasks: ['任务: 输入随机整数序列(seq_len=10, vocab=50), 预测下一token', '只用20条固定数据训练, 目标: train accuracy→100%', '如果达不到→逐个检查: mask是否正确/LN位置/学习率/维度匹配'],
+        criteria: ['20条数据过拟合到100% accuracy (必须在50 epochs内达到)', '能生成简单pattern: 如输入[1,2,3]→预测[2,3,4](学会了递增规律)'],
+        risks: ['过拟合失败=实现有bug, 不要继续学新内容, 必须先修复']
+      }
+    ]
+  },
+  {
+    id: 4, phase: 'foundation',
+    title: '完整 mini-Transformer',
+    subtitle: '字符级语言模型：从 embedding 到生成',
+    points: ['字符级 vocabulary + 数据管线', '正弦位置编码', 'causal self-attention', '完整 encoder block + 训练 + 采样'],
+    experiment: `# Char-level Language Model
+class MiniTransformer(torch.nn.Module):
+    def __init__(self, vocab_size, d_model, n_heads):
+        super().__init__()
+        self.embed = torch.nn.Embedding(vocab_size, d_model)
+        self.pos = PositionalEncoding(d_model)
+        self.encoder = TransformerEncoderLayer(d_model, n_heads)
+        self.out = torch.nn.Linear(d_model, vocab_size)`,
+    formulas: ['P(x_1,...,x_T) = Π_t P(x_t | x_{<t}) — 自回归分解', 'PE(pos,2i)=sin(pos/10000^{2i/d}), PE(pos,2i+1)=cos(pos/10000^{2i/d})'],
+    criteria: ['loss 持续下降且最终可生成非随机字符序列', 'attention 上三角为 0（causal mask 正确）', '固定 seed 后实验完全可复现'],
+    criteriaAnswers: [
+      '生成质量评估: ①输入"ab"→模型补全"abcde..."(有规律)而非"xq9!z"(随机) ②生成100个字符中可辨识pattern>60% ③temperature=0.8时生成多样但不混乱。如果生成全是同一个字符→模型没学到任何模式。',
+      'Causal mask验证: attn[i,j]中所有j>i的位置必须≈0。用assert torch.all(attn[:,:,tril==0]==0)自动检测。这是最容易出错但影响最大的bug——不加mask loss也能降但模型学的是"抄答案"。',
+      '可复现性: torch.manual_seed(42) + torch.cuda.manual_seed_all(42) 固定后, 相同数据相同超参数跑两次loss曲线应完全重合。不重合→存在随机性来源(如DataLoader的shuffle seed未固定)。'
+    ],
+    risks: ['causal mask遗漏 → 模型作弊(loss低但无泛化)', 'residual维度不一致 → add失败', 'teacher forcing与inference行为不一致'],
+    paper: null,
+    resources: [
+      { label: 'The Annotated Transformer (Harvard)', url: 'https://nlp.seas.harvard.edu/annotated-transformer/', note: '重点: Part 1-3的逐行实现。难点: mask的广播维度处理' },
+      { label: 'minGPT (Karpathy)', url: 'https://github.com/karpathy/minGPT', note: '重点: model.py约300行就是你要实现的全部。难点: 理解causal mask为何存在causal attention类中' }
+    ],
+    resourceNotes: '这一周的目标不是"理解Transformer论文",而是"能不看参考资料手写一个可训练的mini-Transformer"。如果你还需要查API才能写完→没过关。',
+    dailyTasks: [
+      {
+        day: 1, title: 'Embedding + 数据管线（语言建模起点）',
+        points: ['构建字符级vocab: 含<pad><bos><eos>', '输入x=[x1..x_{t-1}], 标签y=[x2..x_t] (shift 1位)', 'stoi/itos双向映射'],
+        tasks: ['stoi = {ch:i for i,ch in enumerate(vocab)}; itos = {i:ch for ch,i in stoi.items()}', '构造x,y: x=seq[:-1], y=seq[1:]', '实现 Dataset + DataLoader, 打印一个batch人工验证'],
+        criteria: ['batch shape=[B,T], x与y完全对齐(shift 1位)', '能打印一个batch并人工验证: x[i]的下一个字符==y[i]'],
+        risks: ['没有shift label → loss无意义(模型学到恒等映射)', 'padding未mask→loss污染', 'vocab不固定→embedding混乱']
+      },
+      {
+        day: 2, title: 'Positional Encoding（正弦编码）',
+        points: ['attention是permutation-invariant → 必须加位置', '经典正弦编码: PE(pos,2i)=sin, PE(pos,2i+1)=cos', '不同频率捕捉不同尺度的位置关系'],
+        tasks: ['实现正弦PE: shape=[T, d_model]', '可视化heatmap: plt.imshow(PE)观察条纹模式', '验证: PE[0]≠PE[1] (不同位置编码不同)'],
+        criteria: ['shape=[T,d_model], 不同位置编码不相同', 'PE加到embedding上: x=x_embed+PE, shape不变'],
+        risks: ['PE未broadcast到batch维度→add失败', 'PE device与embedding不一致(cpu vs gpu)']
+      },
+      {
+        day: 3, title: 'Self-Attention 完整实现',
+        points: ['Attention(Q,K,V)=softmax(QKᵀ/√d_k)V', 'Q:"我想找谁", K:"我是谁", V:"我有什么信息"'],
+        tasks: ['实现scaled dot-product attention: 输入[B,T,d]→输出[B,T,d]', '打印 attn map shape=[B,T,T], 验证每行sum=1', '检查数值稳定性: 无NaN'],
+        criteria: ['输入[B,T,d]→输出[B,T,d], shape完全一致', 'attention map每行和为1(概率分布)'],
+        risks: ['忘记除以√d_k→梯度爆炸NaN', 'softmax维度错(必须在最后一维即T维做)']
+      },
+      {
+        day: 4, title: 'Causal Mask（最关键机制）',
+        points: ['mask=torch.tril(torch.ones(T,T))下三角矩阵', 'scores.masked_fill(mask==0, -1e9)→上三角变-inf→softmax后=0', '本质: 信息因果约束 P(x_t|x_{<t})≠P(x_t|x_{1:T})'],
+        tasks: ['实现causal mask并应用到attention scores', '验证: attention矩阵上三角≈0', '对比: 有mask vs 无mask的loss差异(无mask loss更低但不能用)'],
+        criteria: ['attention矩阵严格上三角为0(或<1e-9)', '能解释: 为何无mask的loss更低但推理无用(信息泄露)'],
+        risks: ['不加mask→模型作弊: loss很低但推理完全无用', 'mask方向反了(上三角变下三角)']
+      },
+      {
+        day: 5, title: 'Multi-Head Attention + FFN',
+        points: ['多头: split d→(n_heads,d_head), 各head独立attention, concat', 'FFN(x)=ReLU(xW1+b1)W2+b2 (两层MLP)', 'head维度拆分条件: d_model%n_heads==0'],
+        tasks: ['实现multi-head: Q,K,V各split→独立attention→concat→线性投影', '实现FFN: Linear→ReLU→Linear', '验证: multi-head+FFN输出shape=[B,T,d_model]'],
+        criteria: ['多头concat后shape正确=[B,T,d_model]', 'd_model能被n_heads整除(否则报错)'],
+        risks: ['head维度拆分错误(d_model%n_heads!=0)→立即报错', '忘记最后的线性投影(concat后需要WO矩阵)']
+      },
+      {
+        day: 6, title: '完整 Transformer Encoder Block',
+        points: ['结构: x→x+Attention(LN(x))→x+FFN(LN(x)) (Post-LN)', 'residual: 梯度高速通道, 解决深层梯度消失', 'LayerNorm: 在特征维(d_model)归一化, 不是batch维'],
+        tasks: ['整合: embedding+PE→attention+residual+LN→FFN+residual+LN→输出投影', '验证: forward无报错, 参数量>0', '打印每层输出的shape, 确认全部匹配'],
+        criteria: ['forward无报错, loss可计算', '参数量合理(通常几千到几万)'],
+        risks: ['忘residual→深层梯度消失, loss不降', 'LN位置错误(pre-LN vs post-LN行为不同)', 'residual add维度不一致→报错']
+      },
+      {
+        day: 7, title: '训练 + 生成 + 过拟合验证',
+        points: ['训练: teacher forcing(训练快) vs free running(推理)', '采样: temperature控制随机性, greedy=argmax, sampling=multinomial', '过拟合测试: 20条数据→100% acc=终极验证'],
+        tasks: ['训练char-level LM, 记录loss曲线', '实现greedy和temperature sampling', '只用20条数据过拟合测试→必须在50 epoch内达100%'],
+        criteria: ['loss持续下降且不震荡', '能生成非随机字符序列', '20条过拟合到100%(达不到=有bug)'],
+        risks: ['teacher forcing与inference行为不一致→train loss低但生成差', 'sampling温度过高→输出噪声, 温度过低→重复循环']
+      }
+    ]
+  },
+  {
+    id: 5, phase: 'bio',
+    title: '生物序列建模入门',
+    subtitle: '关键转折周',
+    points: ['DNA/RNA/protein 编码方式', 'one-hot vs learnable embedding', 'FASTA 格式解析', 'tokenization 策略'],
+    experiment: `# 蛋白序列 → token → Transformer 分类
+from Bio import SeqIO
+# 1. 解析 FASTA
+records = list(SeqIO.parse("proteins.fasta", "fasta"))
+# 2. 构建 vocabulary (20 AA + special tokens)
+# 3. 将序列转为 token ids
+# 4. 用 Week 4 的 MiniTransformer 做 family 分类`,
+    formulas: ['氨基酸字母表: ACDEFGHIKLMNPQRSTVWY (20种)'],
+    criteria: ['能处理真实 FASTA 数据', '模型能过拟合小数据集（train acc > 90%）'],
+    risks: ['不做真实数据 → 后面 ESM 完全无法理解输入格式'],
+    paper: null,
+    resources: [
+      { label: 'Biopython 教程', url: 'https://biopython.org/wiki/Documentation' },
+      { label: 'UniProt (蛋白数据库)', url: 'https://www.uniprot.org/' },
+      { label: 'PDB (蛋白结构数据库)', url: 'https://www.rcsb.org/' }
+    ],
+    criteriaAnswers: [
+      'FASTA解析+tokenization完整pipeline: 手写parser(不用Biopython)→过滤异常字符(仅保留20种标准AA)→构建vocab(AA→int, 预留<pad>=0,<unk>=1)→encode→pad到batch最长序列→生成attention_mask。验收: batch[0]的第1个token id正确, mask中padding位置=0。',
+      '过拟合验证: 100条训练数据,train acc须在50 epoch内达>95%。如不达标→逐步排查: ①label是否正确(检查batch[1]) ②mask是否正确(检查attention中padding位置) ③学习率是否合理(1e-3~1e-4)。'
+    ],
+    resourceNotes: '这一周是"从通用DL到生物DL"的分水岭。关键区别: NLP用subword tokenization, 蛋白天然是单字符token(20个AA)。理解了这一点,ESM/ProtBERT的输入格式就自然懂了。',
+    dailyTasks: [
+      {
+        day: 1, title: 'FASTA 解析（底层能力）',
+        points: ['FASTA格式: >header\\nsequence(可跨多行)', '蛋白字母表: 20种标准AA + 特殊符号(X/U/B/Z)的处理策略'],
+        tasks: ['手写FASTA parser(禁止Biopython): 逐行读取,识别>开头的header行', '输出: List[(id, sequence)], 多行序列拼接为一个完整字符串', '测试: 下载UniProt子集(http://uniprot.org), 解析并打印前5条'],
+        criteria: ['能解析UniProt数据,无截断/无拼接错误', '异常字符(X,U等)有明确处理策略(保留/替换/过滤)'],
+        risks: ['忽略异常字符→vocab构建时KeyError', '多行序列拼接错误→序列中间多了空格或换行', '空行导致解析中断']
+      },
+      {
+        day: 2, title: 'Tokenization（生物版）',
+        points: ['蛋白天然单字符token: 20种AA(ACDEFGHIKLMNPQRSTVWY)', 'NLP用subword,蛋白用单字符→vocab size固定(~25)', '特殊token: <pad>=0, <unk>=1, <cls>=2, <eos>=3'],
+        tasks: ['构建vocab: AA→int, 含特殊token', '实现encode(seq): 将氨基酸序列转为token id列表', '实现pad(batch): 将不等长序列pad到统一长度,生成attention_mask'],
+        criteria: ['batch shape=[B,L], attention_mask中padding位置=0,有效位=1', '打印一组batch,人工验证编码正确(如"M"→对应id)'],
+        risks: ['padding未mask→attention在padding位也有权重→污染有效信息', 'vocab中缺少某个AA→encode时crash', 'mask与pad不对齐→Transformer看到padding']
+      },
+      {
+        day: 3, title: 'Dataset 工程化',
+        points: ['torch.utils.data.Dataset: __len__ + __getitem__', 'collate_fn: 在batch级别做padding(不在Dataset里做!)', 'DataLoader: shuffle/batch_size/num_workers'],
+        tasks: ['class ProteinDataset(Dataset): __getitem__返回(token_ids, label)', '实现collate_fn: 对batch中不等长序列pad_to_longest', '构建DataLoader,支持shuffle和variable length'],
+        criteria: ['DataLoader正常shuffle', 'batch中不同长度序列正确处理(短序列pad到最长)'],
+        risks: ['在Dataset做heavy compute→每个样本都重新处理一遍→极慢', 'collate_fn未处理空batch→训练中断', '忘记在collate_fn中同时pad labels']
+      },
+      {
+        day: 4, title: 'Baseline: Embedding + Mean Pooling（必须步骤）',
+        points: ['原则: baseline不过→Transformer一定失败', 'Embedding→mean pooling→Linear是最简单的序列分类器', '验证: 数据正确性+label合理性'],
+        tasks: ['模型: nn.Embedding(vocab_size, 64)→mean(dim=1)→nn.Linear(64, n_classes)', '在小数据(100条)上训练,目标: train acc≈100%'],
+        criteria: ['100条数据过拟合到>95% accuracy(50 epoch内)', '如果达不到→数据或label有问题,先修复再前进'],
+        risks: ['一上来就用Transformer→debug困难(不知是数据问题还是模型问题)', '跳过baseline→浪费时间调试实际上正确的模型']
+      },
+      {
+        day: 5, title: '引入 Transformer 替换 Pooling',
+        points: ['将mean pooling替换为TransformerEncoder', '关键: 传入src_key_padding_mask屏蔽padding位', '序列长度对attention的O(L²)影响'],
+        tasks: ['替换: embedding→TransformerEncoder(2层,4head)→取[CLS]位或mean→Linear', '实现src_key_padding_mask: True表示padding位(被忽略)', '对比: baseline vs Transformer的accuracy'],
+        criteria: ['loss下降且比baseline更好(或至少可训练)', 'padding mask正确传入了Transformer的forward'],
+        risks: ['忽略padding mask→Transformer把pad当有效token处理→性能不如baseline', '序列过长(>512)→self-attention O(L²)爆炸→显存溢出']
+      },
+      {
+        day: 6, title: '过拟合测试（最关键 debug 能力）',
+        points: ['这是最重要的一步: 只用20条数据训练→必须过拟合', '过拟合失败=代码有bug(不是数据问题)', '诊断顺序: mask→label→lr→维度'],
+        tasks: ['只用20条固定数据训练Transformer模型', '目标: loss→接近0, accuracy→100%', '如达不到: ①检查mask是否正确 ②打印label分布 ③调整lr ④检查维度匹配'],
+        criteria: ['20条数据50 epoch内train accuracy=100%', 'loss<0.01(分类)或perplexity<1.01(LM)'],
+        risks: ['过拟合失败=实现有bug,不要继续学新内容,必须先修复', '最大常见bug排名: ①mask错 ②label shift错 ③学习率过大 ④忘记zero_grad']
+      },
+      {
+        day: 7, title: '实验记录与可视化 + 可复现性',
+        points: ['固定seed: torch.manual_seed(42)+np.random.seed(42)', '实验记录: loss曲线+accuracy曲线+超参数', '为后续ESM/AlphaFold实验建立可对比基线'],
+        tasks: ['画loss/acc曲线(matplotlib)', '写README: 数据→模型→超参数→结果→复现步骤', '检查可复现性: 重新运行一次,loss曲线应与之前完全重合'],
+        criteria: ['固定seed后两次运行loss曲线完全重合', 'README包含所有必要信息(他人可复现)'],
+        risks: ['不固定seed→结果不可复现→无法可靠评估改进', '不记录实验→第6周对比ESM时没有baseline数据']
+      }
+    ]
+  },
+  {
+    id: 6, phase: 'bio',
+    title: 'ESM 蛋白语言模型',
+    subtitle: '不是"调API"，而是理解进化信息如何被Transformer编码',
+    points: ['ESM = bidirectional protein Transformer', 'token系统与自定义编码的本质区别', 'embedding = 上下文编码的进化信息', '冻结 vs 微调的科学决策'],
+    experiment: `import esm
+model, alphabet = esm.pretrained.esm2_t6_8M_UR50D()
+model.eval()  # 必须! 否则dropout影响embedding
+batch_converter = alphabet.get_batch_converter()
+data = [("protein1", "MKTVRQERLKSIVRILERSK...")]
+batch_labels, batch_strs, batch_tokens = batch_converter(data)
+with torch.no_grad():
+    results = model(batch_tokens, repr_layers=[6])
+embedding = results["representations"][6]  # [B, L, 320]`,
+    formulas: ['h_i = f(context around residue i) — 上下文编码,不是单AA特征', 'per-residue embedding ∈ R^d, d=320 (esm2_t6, 8M参数)'],
+    criteria: ['ESM frozezen + classifier 分类准确率显著优于Week5从零训练', '能解释: embedding为什么包含"隐式MSA"信息', 'batch inference速度>2x逐条推理'],
+    criteriaAnswers: [
+      'ESM优于从零训练的原因: ESM在~65M蛋白序列上预训练,embedding隐式编码了共进化信息(类似MSA的协变信号)。因此即使冻结ESM只训练线性分类头,小数据集上也能远超从零训练的Transformer。量化: 相同100条训练数据,ESM frozen预期acc>80%,Week5从零训练预期acc~60-70%。',
+      '隐式MSA: ESM训练时看到大量同源序列,通过attention学习到"哪些位点常共变"。例如活性位点残基对在attention map中权重高,因为它们在进化中协同变化。这就是AlphaFold用显式MSA而ESM用隐式MSA的本质区别。',
+      'Batch inference加速: 将不等长序列按长度排序后分组→同长度batch→减少padding计算→速度提升2-3x。关键代码: batch_tokens中padding位(alphabet.padding_idx)在attention中被自动忽略(通过padding_mask)。'
+    ],
+    risks: ['手写token替代alphabet→embedding完全失效', '忘记model.eval()→dropout导致embedding不稳定', 'batch过大→OOM(ESM虽是8M参数但attention仍O(L²))'],
+    paper: 'Lin et al., 2023, Science, "Evolutionary-scale prediction of atomic-level protein structure"',
+    paperUrl: 'https://www.science.org/doi/10.1126/science.ade2574',
+    resources: [
+      { label: 'ESM GitHub (Meta 官方)', url: 'https://github.com/facebookresearch/esm', note: '重点: README的API用法+esm/extract.py。难点: 不同模型版本(esm2_t6/12/30/33)的embedding维度差异' },
+      { label: 'ESM Atlas 在线查询', url: 'https://esmatlas.com/', note: '重点: 可视化embedding的foldability。难点: 理解为什么有些序列foldable有些not' }
+    ],
+    resourceNotes: '本周核心不是"会用ESM API",而是理解: 你的Week5从零训练的Transformer vs ESM的差距,就是"通用序列知识"的价值。这个差距在小数据上尤甚——这就是预训练的意义。',
+    dailyTasks: [
+      {
+        day: 1, title: '模型结构与加载（避免工程卡死）',
+        points: ['ESM本质: bidirectional protein Transformer(类似BERT)', 'esm2_t6: 6层, 8M参数, d=320, 适合入门', 'pip install fair-esm→import esm→esm.pretrained.esm2_t6_8M_UR50D()'],
+        tasks: ['安装fair-esm并加载esm2_t6_8M_UR50D', 'print(model)查看完整结构(6层+embedding+LM head)', '确认GPU/CPU均可运行forward'],
+        criteria: ['forward成功无报错', '理解模型层数(6层encoder+1个embedding层)', 'model.eval()已调用(影响后续embedding稳定性)'],
+        risks: ['CUDA版本冲突(PyTorch vs fair-esm)→安装失败', '忘记.eval()→dropout随机置零→同一序列两次forward的embedding不同(破坏可复现性)']
+      },
+      {
+        day: 2, title: 'Token 系统（真正核心，不可跳过）',
+        points: ['ESM token≠你Week5的AA编码: 含特殊token(<cls>,<eos>,<pad>,<mask>)', 'alphabet.get_batch_converter()自动处理tokenization+padding', 'ESM的embedding是在预训练中学习好的→不能用自定义token替代'],
+        tasks: ['batch_converter=alphabet.get_batch_converter()', '输入data=[("id","MKTV...")], 打印batch_tokens.shape=[B,L]', '验证: batch_tokens中特殊token的位置和id'],
+        criteria: ['token shape正确=[B,L], 包含BOS/EOS', '能解释padding index是什么,在attention中如何被屏蔽'],
+        risks: ['手写token替代alphabet→完全不同的token id→embedding查表查错→输出无意义(致命错误!)', '不理解"Why必须用alphabet"=不理解预训练模型的基本原理']
+      },
+      {
+        day: 3, title: 'Embedding 提取与解释（从不理解到理解的分界线）',
+        points: ['h_i=f(context around residue i): 每个位置的embedding编码了该位置的序列上下文', '不是单AA特征! M在活性位点 vs M在loop区的embedding完全不同', 'per-token: [B,L,d]; per-seq: mean pooling→[B,d]'],
+        tasks: ['with torch.no_grad(): results=model(batch_tokens,repr_layers=[6])', '提取per-token embedding: results["representations"][6]', '提取per-seq: token_embeddings.mean(dim=1)或取<eos>位'],
+        criteria: ['per-token shape=[B,L,d]', 'per-seq shape=[B,d]', '能解释: 为什么同一个AA"M"在不同蛋白/位置的embedding不同(因为上下文不同)'],
+        risks: ['误用<cls>token等同BERT→ESM的<cls>不完全等价于BERT的[CLS](建议用mean pooling更鲁棒)', 'mean pooling简单但可能丢失位置特异性信息→对于位点级任务(如binding site)应用per-token']
+      },
+      {
+        day: 4, title: '下游分类任务（冻结ESM，只训分类头）',
+        points: ['范式: 冻结预训练模型(no_grad)→提取embedding→只训练下游分类器', '冻结=param.requires_grad=False或with torch.no_grad()', '理由: 小数据全量微调→灾难性过拟合'],
+        tasks: ['class Classifier(nn.Module): ESM→Linear(d, n_classes)', '训练时: ESM部分with torch.no_grad(),只更新Linear参数', '记录train/val loss曲线,监控过拟合'],
+        criteria: ['loss下降且val accuracy>baseline(Week5从零训练)', '分类器参数量合理(Linear: d×n_classes, 很小)'],
+        risks: ['同时训练ESM→小数据必过拟合(train acc 100%但val<50%)', 'batch太大→OOM(虽然ESM只有8M参数,但attention仍O(L²),长序列仍费显存)']
+      },
+      {
+        day: 5, title: '对比实验（科学训练的核心能力）',
+        points: ['实验设计: 相同数据,对比Week5从零训练 vs ESM frozen', 'ESM优势来源: 预训练中隐式学到的共进化信息(类似MSA)', '反直觉: 小数据上ESM优势更大!大数据上差距缩小'],
+        tasks: ['设计表格: Model|TrainAcc|ValAcc|F1|训练时间', '在相同train/val split上分别训练Week5模型和ESM frozen', '分析: ESM相比Week5的优势在哪些样本上最大(困难样本)'],
+        criteria: ['ESM在val集上F1显著高于Week5(至少+10%)', '有量化对比表格(不只是一个"好"字)'],
+        risks: ['数据太小(<50条)→差异不明显(统计不显著)', '数据太简单(如全是同一家族)→两个模型都接近100%→无法区分']
+      },
+      {
+        day: 6, title: 'Batch Inference 工程优化',
+        points: ['瓶颈: 逐条forward→GPU空闲等待→利用率<20%', '优化: 按长度排序→同长度分batch→减少padding浪费', '目标: 推理速度>2x baseline, GPU利用率>60%'],
+        tasks: ['实现batch推理: 将序列按长度排序→分组batch→批量forward', '对比: 逐条 vs batch的throughput(seqs/sec)', '确保padding位不参与embedding计算(attention_mask)'],
+        criteria: ['推理速度>2x逐条推理(同GPU)', 'GPU利用率明显提升(用nvidia-smi监控)'],
+        risks: ['不同长度未处理→shape不匹配crash', 'padding参与attention计算→embedding被污染(应被mask)']
+      },
+      {
+        day: 7, title: '实验总结（科研写作能力）',
+        points: ['科研最低标准: 别人可复现你的结果', '实验报告结构: 数据→模型→超参数→结果→分析', 'seed固定=可复现性的最低要求'],
+        tasks: ['写实验报告: 包含实验设置/模型对比表/结果分析', '固定所有seed后重跑一次→验证结果一致', 'GitHub上传: 代码+README+结果表'],
+        criteria: ['报告逻辑清晰(他人可复现)', 'seed固定后两次运行loss曲线完全重合'],
+        risks: ['不记录超参数→下周忘记用了什么配置→无法对比', '不固定seed→结果波动→无法判断改进是否有效']
+      }
+    ]
+  },
+  {
+    id: 7, phase: 'bio',
+    title: 'AlphaFold / OpenFold',
+    subtitle: '不是"结构预测器"，而是进化约束 + 几何推理系统',
+    points: ['MSA: 协变信号→空间约束', 'Evoformer: row+column attention+pair representation', 'Structure Module: IPA(不变点注意力)', 'pLDDT/PAE: 结构置信度评估'],
+    experiment: `# OpenFold inference (小蛋白)
+# 输入: 蛋白序列 → MSA → 结构
+python run_pretrained_openfold.py \\
+  --fasta_dir data/ \\
+  --output_dir results/ \\
+  --model_device "cuda:0" \\
+  --config_preset "model_1"`,
+    formulas: ['FAPE loss: 帧对齐点误差 — 在局部坐标系中计算,保证旋转平移不变性', 'pair(i,j) ≈ P(residue_i ↔ residue_j) — 成对表示编码残基间距离/方向'],
+    criteria: ['能画出完整pipeline: seq→MSA→Evoformer→Structure Module→3D坐标', '能解释为什么MSA是核心(不是可选的辅助输入)', '成功运行OpenFold并解读pLDDT/PAE图'],
+    criteriaAnswers: [
+      'AlphaFold pipeline: ①输入序列→搜索基因数据库构建MSA+模板 ②MSA→Evoformer处理(row attention捕捉序列模式,column attention捕捉共进化,pair representation编码残基对关系) ③Structure Module用IPA迭代优化3D坐标 ④输出:每个残基的(x,y,z)+pLDDT置信度。',
+      'MSA提供共进化信号: 两个位点如果在进化中协同突变(covary),说明它们在3D空间中靠近(有功能/结构约束)。AlphaFold用self-attention捕捉这种协变模式,将其转化为距离约束。没有MSA→AlphaFold精度大幅下降→这就是为什么它不同于"从序列直接预测结构"。',
+      'pLDDT: 每个残基的预测置信度(0-100),>90高置信,<50低置信(可能disorder)。PAE: 残基对(i,j)的预测位置误差,对角线近=局部结构确定,对角线远=远程接触不确定。好的预测: pLDDT整体>80,PAE矩阵清晰(对角线附近深蓝)。'
+    ],
+    risks: ['忽略MSA→完全不理解AlphaFold核心,以为"序列进→结构出"', '环境配置耗时长→建议提前准备Docker/Colab', '只看论文不运行→"看懂但不会用"'],
+    paper: 'Jumper et al., 2021, Nature, "Highly accurate protein structure prediction with AlphaFold"',
+    paperUrl: 'https://www.nature.com/articles/s41586-021-03819-2',
+    resources: [
+      { label: 'AlphaFold 论文 (Nature)', url: 'https://www.nature.com/articles/s41586-021-03819-2', note: '重点: Figure 1a-d架构图+Supplementary Methods。难点: IPA的数学推导' },
+      { label: 'OpenFold GitHub', url: 'https://github.com/aqlaboratory/openfold', note: '重点: 开源复现,可直接运行。难点: 数据库下载(数TB)和CUDA配置' },
+      { label: 'AlphaFold Database', url: 'https://alphafold.ebi.ac.uk/', note: '重点: 预计算结构查询。难点: 理解为何某些区域预测差(disorder)' }
+    ],
+    resourceNotes: '本周最容易犯的错误: 认为AlphaFold是"魔法黑盒"。它不是——它是一个将进化信息(MSA)+几何推理(IPA)系统化整合的工程杰作。理解这一点,你就理解了蛋白质结构预测的过去20年。',
+    dailyTasks: [
+      {
+        day: 1, title: '问题定义（从序列到3D结构）',
+        points: ['任务: sequence→(x,y,z)_{每个原子}, 不是分类问题!', 'PDB格式: ATOM记录每原子坐标, backbone=N/CA/C, sidechain=其余', '蛋白结构层次: 一级序列→二级结构(α/β)→三级折叠→四级组装'],
+        tasks: ['下载一个PDB文件(如1UBQ),用文本编辑器打开理解ATOM行', '用PyMOL打开该PDB: 识别backbone vs sidechain', '理解: N→CA→C→N→CA→C...的主链走向'],
+        criteria: ['能识别PDB文件中的backbone原子(N,CA,C)', '能用PyMOL旋转观察结构并指认α-螺旋和β-折叠'],
+        risks: ['把结构预测当成"分类问题"(如"fold type")→完全错误,3D坐标是连续的', '完全停留在概念层→Day5无法操作OpenFold']
+      },
+      {
+        day: 2, title: 'MSA（核心，此步不可跳过）',
+        points: ['MSA=多序列比对: 将同源蛋白序列对齐到参考序列', '核心insight: 两个位点协同突变→空间上靠近(共进化→结构约束)', '工具: HHblits(灵敏但慢)/MMseqs2(快)/在线工具(简便)'],
+        tasks: ['用在线MSA工具(如https://toolkit.tuebingen.mpg.de/): 输入你的蛋白序列→得到MSA', '解读MSA结果: 每列=一个位置的对齐,保守位点列中AA相同,变异位点列中AA不同', '理解: 如果pos_i和pos_j总是一起变化→它们在3D中可能接触'],
+        criteria: ['得到至少一个蛋白的MSA结果(对齐矩阵)', '能解释"协变信号"(covariation)的概念'],
+        risks: ['忽略MSA→完全不理解AlphaFold核心→后面Evoformer无意义', 'MSA质量差(同源序列太少)→结构预测精度低→理解为什么AlphaFold对孤儿蛋白效果差']
+      },
+      {
+        day: 3, title: '论文精读（1）— 整体架构',
+        points: ['AlphaFold Nature 2021 Figure 1是所有理解的入口', '数据流: Input seq→Genetic DB→MSA+Template→Evoformer(48 blocks!)→Structure Module(8 blocks)→Recycling(3次)'],
+        tasks: ['精读Figure 1a(数据流)和1b(Evoformer block)', '精读Figure 1c(Structure Module)和1d(recycling)', '手绘pipeline框图(不抄图,自己画)'],
+        criteria: ['能画出完整pipeline: seq→MSA→Evoformer→Structure→3D坐标', '能解释recycling的作用(输出回输,迭代优化,共3轮)'],
+        risks: ['只"读"不"画"→以为自己懂了但实际讲不出来']
+      },
+      {
+        day: 4, title: '论文精读（2）— Evoformer（最难部分）',
+        points: ['Evoformer处理两个表示: MSA representation(序列×位置)和pair representation(位置×位置)', 'Row attention: 在序列间交换信息→找到保守模式', 'Column attention: 在位置间交换信息→捕捉共进化', 'Triangle update: 基于三角不等式约束更新pair→确保几何一致性'],
+        tasks: ['理解: pair(i,j)≈P(i与j在空间中接触)→为什么需要pair表示?', '理解: triangle multiplicative update→如果i近j且j近k,则i近k(三角不等式)'],
+        criteria: ['能解释: 为什么AlphaFold同时需要MSA表示和pair表示?', '能解释: triangle update是如何利用几何约束的'],
+        risks: ['Evoformer太复杂→容易放弃。策略: Day4只看"为什么",不看"怎么实现"']
+      },
+      {
+        day: 5, title: 'OpenFold 运行（工程挑战）',
+        points: ['OpenFold=AlphaFold的开源PyTorch复现', '需要: Docker/Conda环境+GPU+下载模型权重', '捷径: Google Colab有预配置的AlphaFold notebook'],
+        tasks: ['克隆OpenFold: git clone https://github.com/aqlaboratory/openfold', '准备小蛋白FASTA文件(长度<200AA)', '运行推理: python run_pretrained_openfold.py --fasta_dir ./ --output_dir ./out/'],
+        criteria: ['成功生成PDB文件(可被PyMOL打开)', '推理在30分钟内完成(小蛋白+GPU)'],
+        risks: ['环境配置耗时极长(依赖复杂)→优先用Colab', '数据库(MSA搜索需要数TB)→对于小蛋白可跳过MSA搜索直接用模型权重推理']
+      },
+      {
+        day: 6, title: '结果分析（必须掌握）',
+        points: ['pLDDT: predicted Local Distance Difference Test→每个残基的置信度(0-100)', 'PAE: Predicted Aligned Error→残基对(i,j)的预测位置误差(Å)', '解读: pLDDT>90=高置信(可用于实验), pLDDT<50=低置信(可能disorder)'],
+        tasks: ['用PyMOL可视化预测结构,按pLDDT着色(蓝色高/红色低)', '分析PAE图: 对角线附近深蓝=局部结构确定,远程接触浅蓝/白色=不确定', '对比: 你的预测 vs AlphaFold DB中同蛋白的结构(如有)'],
+        criteria: ['能根据pLDDT判断哪些区域可信,哪些不可信', '能解释PAE图中"好"vs"差"的视觉差异'],
+        risks: ['只看pLDDT不管PAE→pLDDT高但PAE差的区域是"局部好但全局错"', '把预测结构当"100%正确"→需要理解预测有不确定性']
+      },
+      {
+        day: 7, title: '总结（建立知识结构 + 与ESM关联）',
+        points: ['AlphaFold vs ESM: 显式MSA(AlphaFold)vs隐式MSA(ESM)', '两者关系: ESM embedding+structure head可能替代AlphaFold的部分功能', '未来方向: 将"结构信息"整合到世界模型的latent dynamics中'],
+        tasks: ['写AlphaFold pipeline总结(文字+自己画的图)', '思考: ESM的embedding和AlphaFold的MSA在本质上有何相似之处?', '思考: 如果将AlphaFold的pair representation作为世界模型的"空间约束",会有什么好处?'],
+        criteria: ['能回答: ①为什么MSA重要 ②Evoformer做了什么 ③pLDDT/PAE如何解读', '能建立ESM→AlphaFold的知识关联(不是孤立的两个模型)'],
+        risks: ['把ESM和AlphaFold当成两个独立工具→缺少"统一表征视角"']
+      }
+    ]
+  },
+  {
+    id: 8, phase: 'advanced',
+    title: '微调 Fine-tuning',
+    subtitle: '预训练模型适配',
+    points: ['freezing vs full fine-tune', 'learning rate scaling（层-wise LR）', 'overfitting 控制策略'],
+    experiment: `# ESM fine-tune: binding prediction
+model, alphabet = esm.pretrained.esm2_t6_8M_UR50D()
+# Freeze bottom layers
+for name, param in model.named_parameters():
+    if 'layers.0' in name or 'layers.1' in name:
+        param.requires_grad = False
+# Add classification head
+head = torch.nn.Linear(320, 2)
+# Train with lower LR
+opt = torch.optim.Adam([
+    {'params': model.parameters(), 'lr': 1e-5},
+    {'params': head.parameters(), 'lr': 1e-3}
+])`,
+    formulas: ['LR_head ≫ LR_backbone (典型 10×~100×)'],
+    criteria: ['train/val 曲线合理', '不出现严重过拟合（val 与 train 差距 < 15%）'],
+    risks: ['全量微调小数据集 → 灾难性遗忘', 'LR 设置不当 → 特征破坏'],
+    paper: null,
+    resources: [
+      { label: 'Hugging Face Transformers 文档', url: 'https://huggingface.co/docs/transformers/' },
+      { label: 'LoRA 论文 (低秩微调)', url: 'https://arxiv.org/abs/2106.09685' },
+      { label: 'Hugging Face Course', url: 'https://huggingface.co/learn/nlp-course' }
+    ],
+    dailyTasks: [
+      {
+        day: 1, title: 'Fine-tune 策略',
+        points: ['freeze vs full fine-tune 的区别', 'learning rate 分层策略'],
+        tasks: ['理解三种微调策略（freeze / partial / full）的适用场景'],
+        criteria: ['能说清每种策略的优缺点'],
+        risks: []
+      },
+      {
+        day: 2, title: '冻结 ESM',
+        points: ['只训练分类头', 'ESM 作为特征提取器'],
+        tasks: ['冻结 ESM 所有层，只训练分类头'],
+        criteria: ['模型稳定训练'],
+        risks: ['lr 过大 → 分类头训练不稳定']
+      },
+      {
+        day: 3, title: '部分解冻',
+        points: ['解冻最后 N 层', '层-wise learning rate'],
+        tasks: ['解冻 ESM 最后几层，设置分层 LR'],
+        criteria: ['性能相比冻结方案有提升'],
+        risks: []
+      },
+      {
+        day: 4, title: '全量微调',
+        points: ['全参数训练', '更大的显存和更慢的收敛'],
+        tasks: ['解冻所有参数进行训练'],
+        criteria: ['收敛但不过拟合'],
+        risks: ['爆显存 → 需要 gradient accumulation']
+      },
+      {
+        day: 5, title: '正则化',
+        points: ['dropout', 'weight decay', 'early stopping'],
+        tasks: ['为模型添加 dropout + weight decay'],
+        criteria: ['过拟合得到控制'],
+        risks: []
+      },
+      {
+        day: 6, title: '实验对比（关键）',
+        points: ['系统对比三种策略', '用表格记录实验结果'],
+        tasks: ['对比 freeze vs partial vs full'],
+        criteria: ['有明确结论（哪种策略最优）'],
+        risks: ['不做对比 → 无法判断策略有效性']
+      },
+      {
+        day: 7, title: '阶段性项目输出',
+        points: ['完整 pipeline: 数据 → ESM → fine-tune → 评估', '可复现代码与实验报告'],
+        tasks: ['整理 GitHub 代码', '撰写实验报告'],
+        criteria: ['代码可复现', '报告包含 baseline vs fine-tune 对比'],
+        risks: []
+      }
+    ]
+  },
+  {
+    id: 9, phase: 'advanced',
+    title: '分布式训练基础',
+    subtitle: '多 GPU 并行',
+    points: ['DataParallel vs DistributedDataParallel', 'NCCL 通信后端', 'gradient synchronization'],
+    experiment: `# DDP 训练脚本
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel as DDP
+dist.init_process_group("nccl")
+model = MyModel().to(local_rank)
+model = DDP(model, device_ids=[local_rank])
+# 启动: torchrun --nproc_per_node=4 train.py`,
+    formulas: ['all-reduce: 梯度在所有 GPU 上求和再广播'],
+    criteria: ['多 GPU 训练成功启动', 'loss 与单 GPU 一致（误差 < 1e-4）'],
+    risks: ['不理解同步机制 → gradient 错误累积', 'NCCL 环境配置不当 → 训练卡死'],
+    paper: null,
+    resources: [
+      { label: 'PyTorch DDP 官方教程', url: 'https://pytorch.org/tutorials/intermediate/ddp_tutorial.html' },
+      { label: 'NCCL 官方文档', url: 'https://docs.nvidia.com/deeplearning/nccl/' }
+    ],
+    dailyTasks: [
+      { day:1, title:'DDP 原理', points:['DataParallel vs DDP: DP单机多卡(主卡汇总),DDP多机多卡(每卡独立all-reduce)','all-reduce将每GPU梯度求和→平均→广播'], tasks:['学习DP vs DDP差异','画出all-reduce同步流程图'], criteria:['能解释DDP为何比DP快(减少主卡瓶颈+通信高效)'], risks:['不理解同步机制→梯度错误累积'] },
+      { day:2, title:'NCCL 配置', points:['NCCL=NVIDIA Collective Communications Library','环境变量NCCL_DEBUG=INFO查看通信日志'], tasks:['配置NCCL,测试:dist.is_initialized()','验证多进程可正常init_process_group("nccl")'], criteria:['DDP脚本能启动(≥2进程)'], risks:['NCCL版本不匹配→死锁'] },
+      { day:3, title:'简单 DDP', points:['torchrun --nproc_per_node=2 train.py','DistributedSampler给每GPU分不重叠数据'], tasks:['2 GPU跑小模型','对比DDP loss vs单GPU loss(误差<1e-4)'], criteria:['2 GPU loss与单GPU一致'], risks:['不用DistributedSampler→每GPU看同数据→训练无效'] },
+      { day:4, title:'多GPU Batch', points:['effective_batch=batch_size×n_gpus','增大global batch保持每GPU batch不变'], tasks:['增大n_gpus验证global batch等效','确认每epoch每GPU见不同数据'], criteria:['loss与等效单GPU batch一致'], risks:['batch不对齐→梯度汇总错→NaN'] },
+      { day:5, title:'Checkpoint (DDP)', points:['只在rank=0保存(state_dict+optimizer+epoch)','所有rank加载同一checkpoint'], tasks:['实现DDP checkpoint保存/恢复','测试中断→恢复→loss连续'], criteria:['可从断点继续训练loss无跳跃'], risks:['每rank都保存→文件重复;只有rank=0恢复→其他状态不一致'] },
+      { day:6, title:'Profiling', points:['torch.profiler分析GPU利用率和通信开销','关键指标:GPU util%,通信vs计算时间'], tasks:['用torch.profiler分析DDP训练','找出瓶颈(计算慢还是通信慢)'], criteria:['各GPU util%差异<10%'], risks:['同步瓶颈→GPU空闲等待→需增大batch或减少通信'] },
+      { day:7, title:'总结', points:['编写DDP操作文档:环境+命令+排错','目标是他人可复现多GPU训练'], tasks:['写DDP文档(含故障排查)','固定seed重跑→验证可复现'], criteria:['文档让同环境他人可复现'], risks:['无文档→下次训练忘配置→重复踩坑'] }
+    ]
+  },
+  {
+    id: 10, phase: 'advanced',
+    title: '集群与调度',
+    subtitle: '工程能力',
+    points: ['Slurm 作业调度系统', 'SSH / rsync 数据传输', 'job script 编写', '日志与监控'],
+    experiment: `#!/bin/bash
+#SBATCH --job-name=train-esm
+#SBATCH --nodes=1
+#SBATCH --gres=gpu:4
+#SBATCH --time=24:00:00
+#SBATCH --output=logs/%j.out
+module load cuda/11.8
+torchrun --nproc_per_node=4 train.py \\
+  --batch_size 64 --epochs 100`,
+    formulas: [],
+    criteria: ['能远程提交训练任务', '训练日志正常记录', '能通过 squeue 监控任务状态'],
+    risks: ['不熟悉集群操作 → 资源浪费 / 任务被 kill'],
+    paper: null,
+    resources: [
+      { label: 'Slurm 官方文档', url: 'https://slurm.schedmd.com/' },
+      { label: 'Slurm 快速入门', url: 'https://slurm.schedmd.com/quickstart.html' },
+      { label: 'SSH/SCP 基础教程', url: 'https://www.ssh.com/academy/ssh' }
+    ],
+    dailyTasks: [
+      { day:1, title:'Slurm 核心概念', points:['节点node=计算服务器,分区partition=节点组,作业job=训练任务','资源:--gres=gpu:4申请GPU'], tasks:['学习sinfo/squeue/srun/sbatch','理解job/partition/node/gres关系'], criteria:['能解释各概念并看懂sinfo输出'], risks:['概念不清→sbatch参数错误→作业失败'] },
+      { day:2, title:'编写Slurm脚本', points:['#SBATCH:--job-name/--nodes/--gres/--time/--output','module load加载CUDA/PyTorch;最后torchrun启动'], tasks:['编写完整slurm脚本','sbatch提交→squeue查看状态'], criteria:['作业能成功提交并运行'], risks:['#SBATCH拼写错→作业拒绝;time太短→训未完被kill'] },
+      { day:3, title:'GPU资源请求', points:['--gres=gpu:4请求GPU;--nodes=1单节点','请求资源>实际→pending'], tasks:['测试1/2/4 GPU请求','理解pending原因(资源不足)'], criteria:['作业正常申请GPU无超时pending','nvidia-smi显示正确GPU数'], risks:['GPU不足→作业永远pending;请求过多→排队长'] },
+      { day:4, title:'日志监控', points:['#SBATCH --output=logs/%j.out','tail -f实时监控;squeue查看详情;sacct看资源统计'], tasks:['配置日志输出并实时追踪','用squeue/sacct监控作业'], criteria:['能实时追踪训练日志+作业状态'], risks:['未配日志→出问题无法debug;日志太大→占满磁盘'] },
+      { day:5, title:'SSH/rsync数据传输', points:['ssh user@cluster;scp上传;rsync -avzP支持断点续传'], tasks:['scp上传代码+数据;rsync下载结果','测试rsync增量同步'], criteria:['数据传输完整;rsync不重复传已有文件'], risks:['权限错→无法写入;路径错→数据丢失'] },
+      { day:6, title:'提交Batch训练', points:['sbatch提交torchrun多GPU;sbatch --array提交多实验','scancel取消作业'], tasks:['提交完整DDP训练作业','监控squeue+sacct+日志;测试多作业提交'], criteria:['训练正常完成不因timeout被kill;日志完整'], risks:['调度不当→资源浪费(申4GPU用1);忘记checkpoint→从头开始'] },
+      { day:7, title:'总结+文档化', points:['整理Slurm脚本模板+常用命令+故障排查','目标:新人30分钟可提交训练'], tasks:['写Slurm操作文档(含模板)','总结常见错误:OOM/pending/permission denied'], criteria:['文档完整(他人可复现)'], risks:['无文档→每次重新摸索→效率极低'] }
+    ]
+  },
+  {
+    id: 11, phase: 'advanced',
+    title: '训练优化（工业级）',
+    subtitle: '显存与速度',
+    points: ['mixed precision（fp16/bf16）', 'gradient accumulation', 'checkpoint 保存与恢复', 'gradient clipping'],
+    experiment: `# Mixed precision + Gradient Accumulation
+scaler = torch.cuda.amp.GradScaler()
+accumulation_steps = 4
+for step, batch in enumerate(dataloader):
+    with torch.cuda.amp.autocast():
+        loss = model(batch)
+    scaler.scale(loss / accumulation_steps).backward()
+    if (step + 1) % accumulation_steps == 0:
+        scaler.step(optimizer)
+        scaler.update()
+        optimizer.zero_grad()`,
+    formulas: ['effective_batch = batch_size × accumulation_steps × n_gpus'],
+    criteria: ['显存占用明显下降（>30%）', '训练稳定不出现 NaN', 'checkpoint 可正常恢复继续训练'],
+    risks: ['fp16 溢出 → loss=NaN', 'accumulation 实现错误 → 梯度不等价'],
+    paper: null,
+    resources: [
+      { label: 'PyTorch AMP 混合精度教程', url: 'https://pytorch.org/tutorials/recipes/recipes/amp_recipe.html' },
+      { label: 'NVIDIA 混合精度训练指南', url: 'https://developer.nvidia.com/automatic-mixed-precision' }
+    ],
+    dailyTasks: [
+      { day:1, title:'Mixed Precision', points:['fp16省50%显存加速计算;autocast自动选fp16/fp32','GradScaler防fp16梯度下溢(太小→0)'], tasks:['with autocast(): loss=model(batch);scaler.scale(loss).backward();scaler.step(opt);scaler.update()','对比fp32 vs fp16:显存+速度+loss曲线'], criteria:['显存↓>30%,loss稳定无NaN'], risks:['溢出→NaN→检查GradScaler;某些op不支持fp16'] },
+      { day:2, title:'Gradient Accumulation', points:['模拟更大batch(显存放不下时);每N步backward累积,第N步update','effective_batch=batch_size×accum_steps×n_gpus'], tasks:['实现loss/N→backward,每accum_steps步opt.step+zero_grad','验证:4步accum+batch=16等价1步+batch=64(误差<1e-3)'], criteria:['effective batch增大4-8倍;accum vs single loss一致'], risks:['忘loss/accum_steps→梯度放大N倍;zero_grad时机错→混入上轮'] },
+      { day:3, title:'Gradient Clipping', points:['防梯度爆炸;clip_grad_norm_(params,max_norm=1.0)','clip_value按绝对值;clip_norm按范数'], tasks:['实现grad clipping','故意设大lr→观察clip前后梯度norm'], criteria:['梯度范数限制在阈值内;无突然loss spike'], risks:['clip太小→学习受限;clip太大→等于没用'] },
+      { day:4, title:'Checkpoint保存', points:['保存:model+optimizer+epoch+scaler(AMP)','torch.save({...},"ckpt.pt");多GPU只在rank=0保存'], tasks:['实现完整checkpoint:每N epoch保存一次','验证文件内容完整'], criteria:['checkpoint含恢复所需全部信息'], risks:['路径不存在→保存失败;权限不足'] },
+      { day:5, title:'Checkpoint恢复', points:['torch.load→model/opt.load_state_dict','恢复后loss/epoch/lr都连续'], tasks:['实现自动检测最新ckpt→加载→继续训练','中断→恢复→验证loss无缝'], criteria:['恢复后loss连续(误差<1e-5)'], risks:['rank/device错→加载错GPU;opt状态与model参数不匹配'] },
+      { day:6, title:'综合测试', points:['集成fp16+accum+clip+checkpoint','验证显存/速度/稳定性/可恢复性'], tasks:['集成所有技术;在更大模型/batch测试','验证任意epoch中断可恢复'], criteria:['显存↓>30%;训练稳定;可恢复'], risks:['多技术参数冲突→某配置被覆盖'] },
+      { day:7, title:'总结+文档化', points:['优化策略文档(含before/after对比)','含fp16配置/accum步数/clip值/ckpt路径'], tasks:['写优化报告:显存/速度before/after','整理配置模板'], criteria:['文档可复现(同配置达同效果)'], risks:['不记配置→下次全忘→重复调参'] }
+    ]
+  },
+  {
+    id: 12, phase: 'project',
+    title: '完整项目产出',
+    subtitle: 'Protein Function / Variant Effect',
+    points: ['端到端 pipeline', 'baseline vs model 对比', '实验记录完整', '代码可复现'],
+    experiment: `# 二选一项目:
+# A. Protein Function Prediction
+#    (GO term / EC number / family)
+# B. Variant Effect Prediction
+#    (ΔΔG / pathogenic vs benign)
+#
+# 必须包含:
+# 1. 数据预处理 pipeline
+# 2. ESM embedding 提取
+# 3. 下游预测模型
+# 4. 评估指标 (AUROC, F1, MCC)
+# 5. 与 baseline 对比`,
+    formulas: ['AUROC, F1-score, MCC 三项指标'],
+    criteria: ['GitHub 仓库可复现', '实验日志完整（W&B 或 TensorBoard）', 'baseline vs model 对比表格', 'README 包含运行说明'],
+    risks: ['项目范围过大 → 无法按时完成', '只调包不思考 → 面试经不起追问'],
+    paper: null,
+    resources: [
+      { label: 'Weights & Biases (实验追踪)', url: 'https://wandb.ai/' },
+      { label: 'TensorBoard 文档', url: 'https://www.tensorflow.org/tensorboard' },
+      { label: 'GitHub 仓库最佳实践', url: 'https://docs.github.com/en/repositories' }
+    ],
+    dailyTasks: [
+      { day:1, title:'数据预处理', points:['整理Protein/Variant数据集;FASTA→tokenize→embedding','train/val/test split:70/15/15'], tasks:['下载公开蛋白数据集(UniProt Swiss-Prot)','编写预处理pipeline(数据→token→loader)'], criteria:['数据格式规范可被ESM直接使用;split各类别均衡'], risks:['数据不清(NaN/异常值)→后续全错'] },
+      { day:2, title:'ESM Embedding提取', points:['批量ESM inference提取per-sequence embedding','存为.npy避免每次重提取'], tasks:['批量提取:model.eval()+no_grad()','验证embedding shape=[N,320];两次提取结果一致'], criteria:['shape正确;同蛋白两次结果一致'], risks:['token错→embedding无效→分类器无法学'] },
+      { day:3, title:'下游预测模型', points:['Linear(320,n_classes)或MLP;loss:CE(分类)/MSE(回归)'], tasks:['训练下游模型(ESM frozen)','记录train/val loss+metric曲线'], criteria:['loss下降;val metric优于随机'], risks:['小数据→过拟合→需正则化'] },
+      { day:4, title:'指标评估', points:['分类:AUROC/F1/MCC;回归:Pearson/Spearman','理解每个指标的适用场景'], tasks:['计算AUROC/F1/MCC;验证与sklearn一致','画ROC曲线+混淆矩阵'], criteria:['AUROC>0.7初步可用;指标计算正确'], risks:['代码错→指标错→结论不可信'] },
+      { day:5, title:'Baseline对比', points:['与Week5从零训模型对比;与MLP baseline对比','表格:Model|AUROC|F1|MCC'], tasks:['构建对比表:Week5/MLP/ESM_frozen','分析ESM为何更好(或不好)'], criteria:['有完整对比表格;能解释差异原因'], risks:['无baseline→无法证明方法有效→项目无价值'] },
+      { day:6, title:'GitHub整理', points:['仓库:data/src/results/README.md','README:简介/安装/用法/结果/引用'], tasks:['Push代码到GitHub;写完整README','确保git clone后能跑通'], criteria:['仓库可复现(他人clone可运行)'], risks:['文档不全→他人无法用→项目打折'] },
+      { day:7, title:'实验报告', points:['结构:Abstract→Methods→Results→Discussion','含所有表格+图表+分析'], tasks:['编写完整实验报告;确认可复现(seed固定)','打包:代码+报告+数据'], criteria:['报告含所有环节;逻辑清晰(可作面试材料)'], risks:['漏环节→报告不全→学术价值低'] }
+    ]
+  },
+  {
+    id: 13, phase: 'worldmodel',
+    title: 'World Model 基础原理',
+    subtitle: 'VAE + RNN/MDN 学习环境隐状态',
+    points: ['VAE 变分自编码器', 'RNN / MDN 时序预测', '压缩高维观测 → 隐状态 → 预测未来', '三阶段架构: Vision (V) → Memory (M) → Controller (C)'],
+    experiment: `# VAE + MDN-RNN World Model 核心
+class VAE(torch.nn.Module):
+    def __init__(self, input_dim, latent_dim=32):
+        super().__init__()
+        self.encoder = torch.nn.Sequential(
+            torch.nn.Linear(input_dim, 256),
+            torch.nn.ReLU(),
+            torch.nn.Linear(256, latent_dim * 2)
+        )
+        self.decoder = torch.nn.Sequential(
+            torch.nn.Linear(latent_dim, 256),
+            torch.nn.ReLU(),
+            torch.nn.Linear(256, input_dim),
+            torch.nn.Sigmoid()
+        )
+
+    def reparameterize(self, mu, logvar):
+        std = torch.exp(0.5 * logvar)
+        return mu + torch.randn_like(std) * std
+
+    def forward(self, x):
+        h = self.encoder(x)
+        mu, logvar = h.chunk(2, dim=-1)
+        z = self.reparameterize(mu, logvar)
+        return self.decoder(z), mu, logvar
+
+# MDN-RNN: 预测 P(z_{t+1} | z_t, a_t, h_t)
+class MDNRNN(torch.nn.Module):
+    def __init__(self, latent_dim, action_dim, hidden_dim=256, n_gaussians=5):
+        super().__init__()
+        self.rnn = torch.nn.LSTM(latent_dim + action_dim, hidden_dim, batch_first=True)
+        self.mdn_pi = torch.nn.Linear(hidden_dim, n_gaussians)     # 混合系数
+        self.mdn_mu = torch.nn.Linear(hidden_dim, n_gaussians * latent_dim)
+        self.mdn_sigma = torch.nn.Linear(hidden_dim, n_gaussians * latent_dim)`,
+    formulas: ['VAE loss = Reconstruction + β·KL(N(μ,σ²) || N(0,1))', 'P(z_{t+1} | z_t, a_t, h_t) — MDN-RNN 混合高斯预测'],
+    criteria: ['能解释 VAE 的 reparameterization trick', '能解释三阶段 (V→M→C) 各自的作用', '在简单环境中跑通 VAE 重建 + RNN rollout'],
+    risks: ['VAE posterior collapse → latent 退化为噪声', 'RNN 误差累积 → 长期 rollout 发散', 'MDN 混合系数训练不稳定'],
+    paper: 'Ha & Schmidhuber, 2018, "World Models", arXiv:1803.10122',
+    paperUrl: 'https://arxiv.org/abs/1803.10122',
+    resources: [
+      { label: 'World Models 论文', url: 'https://arxiv.org/abs/1803.10122' },
+      { label: 'World Models 官方复现', url: 'https://github.com/ctallec/world-models' },
+      { label: 'DeepLearning.AI VAE/GAN 课程', url: 'https://www.deeplearning.ai/courses/' }
+    ],
+    dailyTasks: [
+      { day:1, title:'VAE 原理', points:['reparameterization:z=μ+σ·ε使梯度流过采样层','ELBO=重建-KL→更好重建+更正则latent'], tasks:['推导并实现reparameterization','读Kingma&Welling 2013 Section 2.3'], criteria:['能解释reparam的必要性(否则梯度不通)'], risks:['posterior collapse→KL→0→latent变噪声'] },
+      { day:2, title:'MDN-RNN 原理', points:['MDN用混合高斯建模p(y|x);输出π_k(softmax)/μ_k/σ_k(exp)','多模态:一输入对应多输出(生物天然多模态)'], tasks:['实现MDN输出层:pi/mu/sigma','理解NLL:-log Σ_k π_k·N(y|μ_k,σ_k)'], criteria:['能解释为何单高斯不够(多模态)'], risks:['mode collapse→分量相同;sigma→0→数值不稳定'] },
+      { day:3, title:'三阶段架构(V→M→C)', points:['Vision:VAE压缩观测o→latent z','Memory:MDN-RNN预测z_{t+1}=f(z_t,a_t)','Controller:线性策略π(a|z)在latent决策'], tasks:['画出V→M→C完整数据流图','读Ha&Schmidhuber 2018 Figure 1'], criteria:['能画三阶段架构图并解释每阶段职责'], risks:['混淆顺序→V/M/C有明确依赖'] },
+      { day:4, title:'简单环境VAE', points:['在toy数据(CarRacing/sin波)上训VAE','验证reconstruction可辨识'], tasks:['在简单环境训VAE(观测→latent→重建)','可视化原始vs重建对比'], criteria:['reconstruction有效(视觉可辨识)'], risks:['latent collapse→所有输入重建为同一输出'] },
+      { day:5, title:'简单环境RNN Rollout', points:['在latent space训MDN-RNN预测z_{t+1}','验证rollout不崩(>20步)'], tasks:['收集(z_t,a_t,z_{t+1})→训MDN-RNN','从z_0 rollout 20步,decoder重建是否合理'], criteria:['rollout不发散(观测可辨识)'], risks:['累积误差→后期观测变噪声'] },
+      { day:6, title:'集成VAE+MDN-RNN', points:['完整pipeline:o→VAE→z→MDN-RNN→z\'→decoder→o\'','端到端toy环境rollout'], tasks:['集成VAE+MDN-RNN端到端rollout','可视化rollout轨迹vs真实序列'], criteria:['rollout连续(z+观测轨迹平滑)'], risks:['梯度爆炸→需gradient clipping'] },
+      { day:7, title:'总结+文档化', points:['记录VAE收敛/β/KL权重/RNN hidden/rollout步数','整理V→M→C完整实验'], tasks:['写实验文档:架构图+超参数+结果','固定seed确认可复现'], criteria:['文档完整可复现'], risks:['无文档→Week14 Controller训练难衔接'] }
+    ]
+  },
+  {
+    id: 14, phase: 'worldmodel',
+    title: '强化学习与生成模型基础',
+    subtitle: 'RL + Generative Models 理论补全',
+    points: ['MDP: (S, A, P, R, γ) 五元组', 'Policy Gradient / REINFORCE', 'model-based vs model-free RL', 'VAE / GAN / Transformer 对比'],
+    experiment: `# REINFORCE + World Model Controller
+class Controller(torch.nn.Module):
+    def __init__(self, latent_dim, action_dim):
+        super().__init__()
+        self.net = torch.nn.Sequential(
+            torch.nn.Linear(latent_dim, 64),
+            torch.nn.ReLU(),
+            torch.nn.Linear(64, action_dim),
+            torch.nn.Softmax(dim=-1)
+        )
+
+    def forward(self, z):
+        return self.net(z)
+
+# REINFORCE 训练循环（在 World Model 的 latent space 中）
+def train_controller(controller, world_model, optimizer):
+    z = torch.zeros(1, 32)  # 初始隐状态
+    log_probs, rewards = [], []
+    for t in range(T):
+        action_probs = controller(z)
+        action = torch.multinomial(action_probs, 1)
+        log_probs.append(torch.log(action_probs[0, action]))
+        # 使用 World Model 的 RNN 预测下一步隐状态
+        z = world_model.rnn_step(z, action)
+        rewards.append(get_reward(z))  # 自定义奖励函数
+    # Policy Gradient: loss = -Σ log π(a_t) · R_t
+    R = torch.tensor(rewards).float()
+    loss = -torch.sum(torch.cat(log_probs) * R)
+    loss.backward()`,
+    formulas: ['∇J(θ) = E[ Σ ∇log π_θ(a_t|s_t) · R_t ] — Policy Gradient', 'GAN: min_G max_D V(D,G) — 对抗训练', 'ELBO = E_q[log p(x|z)] - KL(q(z|x)||p(z))'],
+    criteria: ['能写出 MDP 五元组并举例', '理解 model-based RL 为何样本效率更高', '跑通 Policy Gradient 在离散动作空间'],
+    risks: ['混淆 model-based RL 与 World Model 中 "model" 的含义', 'Policy Gradient 方差大 → 收敛困难'],
+    paper: 'Sutton & Barto, 2018, Reinforcement Learning: An Introduction, 2nd ed. (Ch.3, 13)',
+    paperUrl: 'http://incompleteideas.net/book/the-book-2nd.html',
+    resources: [
+      { label: 'Sutton & Barto RL 全书 (免费)', url: 'http://incompleteideas.net/book/the-book-2nd.html' },
+      { label: 'MIT 6.S191 深度学习课程 2023', url: 'https://introtodeeplearning.com/' },
+      { label: 'Gymnasium 官方文档', url: 'https://gymnasium.farama.org/' }
+    ],
+    dailyTasks: [
+      { day:1, title:'MDP概念', points:['MDP五元组:(S,A,P,R,γ)','关键:区分state(环境)和action(智能体)','蛋白WM:state=embedding,action=选择突变'], tasks:['为Week13 toy环境写出(S,A,P,R,γ)','举例CartPole/CarRacing的MDP定义'], criteria:['能写出任意任务MDP五元组并解释含义'], risks:['混淆state(环境)和observation(观测)→POMDP'] },
+      { day:2, title:'Policy Gradient原理', points:['目标:J(θ)=E[Σr_t];∇J=E[Σ∇log π(a|s)·R_t]','直觉:好动作→提高概率;坏动作→降低'], tasks:['推导PG公式','理解R_t是return(累积)非即时reward'], criteria:['能从J(θ)推导出∇J'], risks:['方差大→收敛慢→需baseline;R_t未discount→远期权重过高'] },
+      { day:3, title:'REINFORCE实现', points:['Monte Carlo PG:rollout完整episode→算return→更新','loss=-Σ log π(a|s)·R_t'], tasks:['在CartPole实现REINFORCE','对比random vs REINFORCE的平均reward'], criteria:['loss下降;episode reward上升'], risks:['reward全0→无信号;episode太短→梯度噪声大'] },
+      { day:4, title:'Model-Based vs Model-Free', points:['Model-Free:直接从经验学policy(Q-learning,PG)','Model-Based:先学model→用model规划','样本效率:MB>>MF(model可重复用)'], tasks:['对比Dyna-Q vs Q-learning样本效率','理解World Model中model=MB RL的dynamics model'], criteria:['能解释MB为何效率更高(不需真实交互)'], risks:['混淆WM的"model"与NN model→WM的model特指dynamics'] },
+      { day:5, title:'GAN/VAE对比', points:['VAE:最大化ELBO→隐式p(x)≈p_data;生成模糊但稳定','GAN:对抗训练G vs D;生成清晰但不稳定'], tasks:['画VAE和GAN架构对比图','分析为何VAE适合WM(可逆+latent连续)'], criteria:['能解释VAE/GAN区别和适用场景'], risks:['概念模糊→选错生成模型→WM效果差'] },
+      { day:6, title:'Policy训练(in Latent Space)', points:['Controller=MLP(z→π(a|z)),输入latent非原始观测','训练:latent rollout→算reward→REINFORCE更新'], tasks:['结合Week13 VAE+MDN-RNN实现latent Controller','训Controller最大化rollout累积reward;测试真实环境表现'], criteria:['Controller策略优于random policy'], risks:['rollout爆炸→梯度不稳→截断长度;latent与真实reward不对齐→学到欺骗'] },
+      { day:7, title:'总结+RL文档', points:['整理MDP+PG+REINFORCE+latent Controller','比较random/REINFORCE/latent controller reward'], tasks:['写RL实验报告:方法+实验+结果','seed固定确认可复现'], criteria:['文档完整(策略+模型+可视化)'], risks:['无文档→Week15生物WM难衔接RL'] }
+    ]
+  },
+  {
+    id: 15, phase: 'worldmodel',
+    title: '生物模拟与世界模型实践',
+    subtitle: '构建可学习+可压缩+可决策的生物动力系统抽象',
+    points: ['定义MDP: state/action/transition/reward', '构建简化生物动力系统(替代真实MD)', 'Gym环境+reward设计', 'VAE压缩→MDN-RNN动力学→latent rollout验证'],
+    experiment: `# 完整 WM × Bio 实验
+# 1. 生物动力系统
+def gene_dynamics(x, action):
+    W = np.random.randn(len(x), len(x)) * 0.01
+    noise = np.random.randn(len(x)) * 0.05
+    if action == 0: x = x + W @ x + 0.5
+    elif action == 1: x = x + W @ x - 0.3
+    elif action == 2: x = x - W @ x
+    return np.clip(x + noise, 0, 100)
+
+# 2. Gym Env + Reward(关键!)
+def _compute_reward(self):
+    return -np.linalg.norm(self.state - target_state)
+
+# 3. Data Collection
+dataset = [(s, a, s') for episode in range(100) for t in range(50)]
+
+# 4. VAE(100→32) + MDN-RNN + Latent Rollout`,
+    formulas: ['MDP: s_t∈R^n, a_t∈A, s_{t+1}=f(s_t,a_t), r_t=R(s_t,a_t)', 'MDN: p(z_{t+1}|z_t,a_t)=Σ_k π_k·N(μ_k(z_t,a_t), σ_k(z_t,a_t))', 'VAE loss = ||x-x̂||² + KL(q(z|x)||N(0,I))'],
+    criteria: ['写出完整MDP定义(state/action/transition/reward)并用一句话说明模型学什么', 'VAE latent非collapse(std>0)+MDN-RNN rollout 50步不崩溃', 'latent trajectory PCA/t-SNE可视化连续且不发散'],
+    criteriaAnswers: [
+      '完整MDP示例: state=100维基因表达向量(每个基因的表达水平0-100); action=4种扰动(激活增殖/抑制凋亡/代谢切换/不干预); transition=非线性的W@x+noise+action_effect; reward=-||state-target||₂(越接近目标状态奖励越高)。模型学会:给定当前细胞状态和干预动作,预测下一步状态并找到最优干预策略。',
+      'VAE non-collapse验证: 对100个不同输入,计算z的每个维度的std,应有>80%的维度std>0.1。如果所有维度std≈0→posterior collapse→VAE把一切映射到同一个z→毫无意义。MDN-RNN rollout验证: 从初始z_0开始,用model预测z_1=MDN(z_0,a_0),z_2=MDN(z_1,a_1)...连续50步z的norm不应爆炸(<100)。',
+      'Latent trajectory可视化: PCA降维到2D后,连续时间步的z_t应形成平滑曲线而非随机散点。如果散乱无规律→dynamics没学到。好的latent: 不同action的轨迹清晰可分,同一action的轨迹收敛到相似区域。'
+    ],
+    risks: ['只用模拟软件(GROMACS)但无learning target→完全失败', '线性系统→无学习价值', 'reward不变化→RL失败', 'latent collapse→VAE学到噪声→无法用于决策'],
+    paper: null,
+    resources: [
+      { label: 'World Models (Ha & Schmidhuber 2018)', url: 'https://arxiv.org/abs/1803.10122', note: '重点: Section 2-4的V/M/C三模块。难点: MDN-RNN的温度参数τ控制不确定性' },
+      { label: 'Neural ODE (Chen et al. 2018)', url: 'https://arxiv.org/abs/1806.07366', note: '重点: 将离散动力学推广到连续时间。难点: adjoint method的反向传播' },
+      { label: 'scVelo (Bergen et al. 2020)', url: 'https://www.nature.com/articles/s41587-020-0591-3', note: '重点: RNA velocity=单细胞动力学的真实案例。难点: spliced/unspliced区分' },
+      { label: 'GEO 数据库', url: 'https://www.ncbi.nlm.nih.gov/geo/', note: '真实基因表达数据(替代模拟)' },
+      { label: '10x Genomics 数据集', url: 'https://www.10xgenomics.com/resources/datasets', note: '单细胞分辨率数据(更接近真实WM应用)' }
+    ],
+    resourceNotes: '本周最容易"看起来很高级但实际无效": ①在跑GROMACS但没定义learning objective→只是"用软件"不是"做ML" ②VAE collapse→latent全是噪声→后续全部白做 ③reward无信号→RL无法学习。三个检查点缺一不可。',
+    dailyTasks: [
+      {
+        day: 1, title: '问题建模（最关键的一天）',
+        points: ['明确你的"生物世界模型对象": 基因表达动力学(推荐)/细胞状态转移/蛋白构象变化', '形式化: s_t∈R^n(状态), a_t∈A(干预), s_{t+1}=f(s_t,a_t), r_t=R(s_t,a_t)', '世界模型本质: p(z_{t+1}|z_t,a_t)——是压缩+预测,不是模拟'],
+        tasks: ['选定生物系统并写出完整MDP定义: state/action/transition/reward', '回答: "模型学会什么能力?"(如:预测干预对基因表达的影响)', '画出系统框图: state→(encoder)→z→(dynamics)→z\'→(decoder)→state\''],
+        criteria: ['写出完整MDP五元组(含维度+含义+取值范围)', '能用一句话说明模型的learning target', '选定的状态维度在50-200之间(太小没意义,太大VAE难训)'],
+        risks: ['选"真实MD"但无learning target→完全失败(是模拟不是ML)', '状态不可观测(partial obs)→MDP建模错误→后面全错']
+      },
+      {
+        day: 2, title: '构建简化生物动力系统（替代真实MD）',
+        points: ['实现可控非线性系统: gene_dynamics(x,action)=clip(W@x+action_effect+noise)', '关键: 非线性(必须有), 可控(action改变方向), 不发散(clip)', '本质: 构造f:R^100→R^100, 必须smooth+learnable'],
+        tasks: ['实现gene_dynamics: W=随机矩阵(可视为基因调控网络), action=不同方向的偏置', '测试: rollout 50步,状态不发散(保持在[0,100])', '可视化: PCA降维后不同action的轨迹应有明显方向差异'],
+        criteria: ['系统非线性(不同action导致不同方向的轨迹)', 'rollout 50步稳定(状态始终在合理范围)', '状态不发散(每个维度<100)'],
+        risks: ['线性系统(W@x)→无学习价值(学不到模式)', '数值爆炸/崩溃→后续VAE无法训练→必须clip+小noise']
+      },
+      {
+        day: 3, title: '完善 Gym 环境 + Reward 设计',
+        points: ['完善CellStateEnv: done条件+reward设计', 'reward=-||state-target_state||₂(负L2距离→越近奖励越高)', 'reward必须满足: 有方向性+有区分度+非恒定'],
+        tasks: ['增加done条件: 到达target附近(reward>-0.5)或超过max_steps', '实现_compute_reward: reward=-np.linalg.norm(state-target)', '测试random policy: 收集100 episodes的reward分布→验证有变化'],
+        criteria: ['random policy的reward有分布(非常数,min≠max)', 'reward随接近target而增加(有方向性)', 'done条件正常触发(不提前结束也不永远不结束)'],
+        risks: ['reward不变化→RL的policy gradient无信号→完全失败', 'reward太noisy(噪声>信号)→学习不稳定', 'target不可达→永远不done→无限循环']
+      },
+      {
+        day: 4, title: '数据采样（World Model 的训练数据）',
+        points: ['收集transitions: random policy采样→构建(s,a,s\')数据集', '本质: 用数据近似p(s_{t+1}|s_t,a_t)——这是world model要学的分布', '数据要求: >5000 transitions, 状态覆盖充分, 动作分布均匀'],
+        tasks: ['dataset=[]; for ep in range(100): for t in range(50): s\'=env.step(a); dataset.append((s,a,s\'))', '验证: len(dataset)>5000, 状态的std>0(非退化)', '检查: 每个action被采样的次数大致均匀'],
+        criteria: ['dataset size>5000', '状态分布非退化(各维度std>0, 不是全相同)', '动作分布均匀(每个action采样次数差异<20%)'],
+        risks: ['数据太少(<1000)→VAE无法学习→collapse', '动作分布不均(如只采样action0)→model对其他action预测不准', '状态coverage不足→model在未见过区域rollout发散']
+      },
+      {
+        day: 5, title: 'VAE 状态压缩（100维→16/32维 latent）',
+        points: ['目的: 让高维生物状态进入"可预测的压缩空间"', '实现: encoder q(z|x)→z=μ+σ·ε, decoder p(x|z)→x̂', 'loss=||x-x̂||²+β·KL(q(z|x)||N(0,I))', 'β调度: 从0逐步增大(warm-up)防止collapse'],
+        tasks: ['实现VAE: encoder/decoder各3层MLP, latent_dim=16或32', '训练: reconstruction loss+KL loss, β warm-up从0到1', '验证non-collapse: 对不同输入计算z的std→>80%维度std>0.1'],
+        criteria: ['reconstruction loss持续下降且收敛', 'latent不collapse(std>0,至少80%的维度有变化)', 'decoder重建的状态与输入有视觉/数值相关性'],
+        risks: ['KL太强→posterior collapse(latent所有维度std≈0)→VAE废了', 'KL太弱→latent无结构→采样时生成垃圾', 'latent dim太大→RNN难以学动力学, 太小→信息丢失']
+      },
+      {
+        day: 6, title: 'MDN-RNN 动力学建模（核心预测器）',
+        points: ['建模: p(z_{t+1}|z_t,a_t)用混合高斯分布(MDN)', 'input=[z_t, a_t]→LSTM→输出π_k,μ_k,σ_k(k个高斯分量)', 'MDN适合生物系统: 一个输入可能对应多个可能的输出(多模态)', '训练目标: NLL(负对数似然)→最小化'],
+        tasks: ['实现MDN-RNN: LSTM→pi(softmax), mu, sigma(exp保证正)', '训练: 输入(z_t,a_t), 预测z_{t+1}的混合高斯分布, 最小化NLL', '验证: rollout 50步,z的norm不爆炸(<100),轨迹不发散'],
+        criteria: ['NLL下降且收敛', 'rollout 50步稳定(z不爆炸,轨迹有方向性)', 'MDN的多个高斯分量有实际使用(不是只有1个分量活跃)'],
+        risks: ['模型只学mean(mode collapse)→所有高斯分量相同→退化为单高斯', 'mix_coeff全集中于一个分量→无multi-modal能力', 'rollout误差累积→50步后z爆炸→需要gradient clipping+shorter horizon']
+      },
+      {
+        day: 7, title: 'Latent Rollout + 可视化 + 系统验证',
+        points: ['完整pipeline: state→VAE→z→MDN-RNN→z\'→VAE decoder→state\'', '可视化: PCA/t-SNE降维latent trajectory→验证是否"动力学一致"', '终极验证: latent空间中的轨迹是否连续/有结构/不发散'],
+        tasks: ['实现latent rollout: 从z_0开始,用MDN-RNN自回归预测z_t序列', 'PCA降维到2D: 画不同action的latent trajectory(不同颜色)', '分析: 轨迹是否按action分组?是否收敛到稳定点?是否不交叉混乱?'],
+        criteria: ['latent trajectory连续平滑(无跳跃)', '不发散(50步后z仍在合理范围内)', '不同action的轨迹在PCA图中清晰可辨'],
+        risks: ['latent无结构(PCA散点随机)→VAE失败→Day5的collapse没检查出来', 'rollout爆炸→RNN失败→Day6的NLL下降但实际不稳定', 'trajectory交叉混乱→dynamics没学到任何有意义的模式→从头检查MDP定义']
+      }
+    ]
+  }
+];
+
+const weeksWorldModelSys = [
+  {
+    id: 1, phase: 'math',
+    title: '概率与动态系统基础',
+    subtitle: '统一数学语言：ELBO / SSM / Markov',
+    points: ['隐变量模型 p(x,z)', '贝叶斯公式与变分推断', '马尔可夫过程', '状态空间模型与卡尔曼滤波'],
+    formulas: ['ELBO: log p(x) ≥ E_q[log p(x|z)] - KL(q||p)', 'KL(q||p) = E_q[log q - log p]', 'z_t = f(z_{t-1}) + ε_t (SSM)'],
+    criteria: ['能完整推导 ELBO', '理解 Markov 假设对世界模型的意义', '实现 1D 卡尔曼滤波并画真实 vs 估计状态'],
+    criteriaAnswers: [
+      'ELBO推导: log p(x) = log ∫ p(x,z)dz = log ∫ q(z|x)·p(x,z)/q(z|x) dz ≥ ∫ q(z|x) log p(x,z)/q(z|x) dz = E_q[log p(x|z)] - KL(q(z|x)||p(z))。Jensen不等式取等号当q(z|x)=p(z|x)。',
+      'Markov假设意味着未来状态只依赖当前状态，与历史无关。世界模型依赖此假设来压缩历史 → p(s_t|s_{t-1}) 而非 p(s_t|s_0,...,s_{t-1})，这使latent dynamics可以用低维RNN建模。但现实中生物系统可能违反Markov性（如长期记忆效应）。',
+      'Kalman filter核心: predict步骤 x̂_k = F x̂_{k-1}, P_k = F P_{k-1} F^T + Q; update步骤 K = P_k H^T (H P_k H^T + R)^(-1), x̂ = x̂_k + K(z - H x̂_k), P = (I - KH)P_k。可视化应显示估计值平滑跟踪真实值，误差区间逐渐收敛。'
+    ],
+    risks: ['跳过概率推导 → 后续 VAE/RL 理论全部悬空'],
+    paper: null,
+    resources: [
+      { label: 'PRML (Bishop) Ch.9-10', url: 'https://www.microsoft.com/en-us/research/people/cmbishop/prml-book/', note: '重点: 9.2节混合模型→9.4节EM→10.1节变分推断。难点: EM到变分的过渡，理解q(z)是近似后验' },
+      { label: 'Kalman Filter 交互式教程', url: 'https://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/', note: '重点: predict-update循环的直觉。难点: 协方差矩阵P的含义' }
+    ],
+    resourceNotes: '本周数学密度最高: ELBO推导必须手写3遍以上，KL散度的不对称性是理解VAE loss的关键。卡尔曼滤波不要只看公式，必须写代码跑出图。',
+    dailyTasks: [
+      { day: 1, title: '概率建模基础', points: ['隐变量模型 p(x,z)', '贝叶斯公式'], tasks: ['推导 p(x) = ∫ p(x|z)p(z)dz'], criteria: ['理解 latent variable 的核心思想'], risks: [] },
+      { day: 2, title: 'KL散度与变分推断', points: ['KL(q||p) = E_q[log q - log p]', 'ELBO 推导'], tasks: ['手写 ELBO 完整推导过程'], criteria: ['能从 log p(x) 出发推出 ELBO'], risks: ['跳过推导 → 不理解 VAE loss 来源'] },
+      { day: 3, title: '马尔可夫过程', points: ['Markov assumption: p(s_t|s_{t-1})', '转移矩阵'], tasks: ['写 Markov chain 模拟'], criteria: ['理解世界模型为何依赖 Markov 结构'], risks: [] },
+      { day: 4, title: '状态空间模型', points: ['z_t = f(z_{t-1}) + ε_t', '卡尔曼滤波直觉'], tasks: ['理解 predict-update 循环'], criteria: ['能解释 SSM 与 RNN 的关系'], risks: [] },
+      { day: 5, title: '实现卡尔曼滤波 (1)', points: ['1D tracking 问题建模'], tasks: ['实现 predict 步骤', '实现 update 步骤'], criteria: ['代码无 bug'], risks: [] },
+      { day: 6, title: '实现卡尔曼滤波 (2)', points: ['模拟 + 可视化'], tasks: ['生成带噪声轨迹', '对比真实 vs 估计状态'], criteria: ['图表清晰'], risks: [] },
+      { day: 7, title: '总结 + 数学笔记', points: ['整理本周推导'], tasks: ['写 ELBO/KL/SSM 三页数学笔记'], criteria: ['可作为后续快速参考'], risks: ['不做笔记 → Week 3 VAE 又要重新推'] }
+    ]
+  },
+  {
+    id: 2, phase: 'math',
+    title: '神经网络动力学模型',
+    subtitle: 'RNN 作为非线性状态空间模型',
+    points: ['RNN = 非线性 SSM', 'teacher forcing vs free rollout', 'sequence prediction', '误差累积分析'],
+    formulas: ['h_t = tanh(W_h h_{t-1} + W_x x_t)', 'rollout: ĥ_t = f(ĥ_{t-1}) 自回归生成'],
+    criteria: ['手写 RNN forward + rollout', 'rollout 20-50 steps 稳定不崩', '能解释 teacher forcing 的利弊'],
+    criteriaAnswers: [
+      'RNN forward: h_t = tanh(W_ih·x_t + b_ih + W_hh·h_{t-1} + b_hh), y_t = W_ho·h_t + b_ho。关键: h_t既是输出也是下一时刻输入，这使RNN成为动力系统。',
+      '稳定rollout的指标: MSE在50步内不超过初始误差的5倍，轨迹形状保持。训练技巧: ①训练时加小噪声 ②用LayerNorm ③梯度裁剪到1.0。',
+      'Teacher forcing优点: 训练快、梯度稳定(不累积)。缺点: train-test mismatch → 推理时self-feed的误差在训练时从未见过(exposure bias)。缓解: scheduled sampling逐步增加self-feed比例。'
+    ],
+    risks: ['free rollout 发散 = 世界模型的核心难点'],
+    paper: null,
+    resources: [
+      { label: 'Karpathy RNN 博客', url: 'https://karpathy.github.io/2015/05/21/rnn-effectiveness/', note: '重点: char-level LM的完整实现。难点: 理解为何RNN能学会括号匹配等长程依赖(其实不太能)' }
+    ],
+    resourceNotes: '这一周的核心不是"会调torch.nn.RNN"，而是理解teacher forcing和free rollout的gap——这是所有世界模型的根本矛盾。',
+    dailyTasks: [
+      { day: 1, title: 'RNN 动力系统视角', points: ['RNN ≈ 非线性状态空间模型', '隐藏状态就是 latent state'], tasks: ['画出 RNN 展开图'], criteria: ['理解 h_t 的角色'], risks: [] },
+      { day: 2, title: '手写 RNN Cell', points: ['tanh 激活', '权重矩阵含义'], tasks: ['实现 RNNCell.forward()'], criteria: ['shape 正确'], risks: [] },
+      { day: 3, title: 'Sequence Prediction Task', points: ['sin 波预测任务'], tasks: ['构建训练数据', '训练 RNN 预测下一步'], criteria: ['loss 下降'], risks: [] },
+      { day: 4, title: 'Teacher Forcing', points: ['训练时用真实上一步', '加速收敛'], tasks: ['实现 teacher forcing 训练'], criteria: ['收敛更快'], risks: [] },
+      { day: 5, title: 'Free Rollout', points: ['推理时用自己的预测作为输入', '误差累积'], tasks: ['实现 free rollout 推理'], criteria: ['能生成序列'], risks: ['第一步就发散 → 模型没学好'] },
+      { day: 6, title: 'Rollout 稳定性测试', points: ['定量评估 rollout 质量'], tasks: ['测试 20/50/100 step rollout'], criteria: ['50 steps MSE 可接受'], risks: ['超过 20 步发散 → 需要更好的训练策略'] },
+      { day: 7, title: '总结 + 可视化', points: ['对比 teacher forcing vs rollout'], tasks: ['画 rollout 轨迹 vs 真实', '写实验报告'], criteria: ['文档清晰'], risks: [] }
+    ]
+  },
+  {
+    id: 3, phase: 'vae',
+    title: 'VAE 与潜变量动力学',
+    subtitle: '从静态 VAE 到 latent dynamics',
+    points: ['VAE 推导 (encoder/decoder)', 'reparameterization trick', 'latent interpolation', 'z_t → z_{t+1} 过渡'],
+    formulas: ['VAE loss = E_q[log p(x|z)] - β·KL(q(z|x)||p(z))', 'z = μ + σ ⊙ ε, ε ~ N(0,I)'],
+    criteria: ['实现 VAE 并在 MNIST 上训练', 'latent space interpolation 平滑', 'latent trajectory 可视化平滑'],
+    criteriaAnswers: [
+      'VAE实现关键: encoder输出μ和log σ²(不是σ), decoder输出Bernoulli参数(MNIST)或Gaussian均值。Loss = BCE(x, x̂) + 0.5·Σ(μ² + σ² - log σ² - 1)。训练后重建应清晰但略模糊(这是正常的)。',
+      '平滑插值: z_α = α·z_A + (1-α)·z_B, α从0到1。生成的图像应逐步从A变为B，中间不应出现无意义的乱码。如果中间乱码→latent space不够平滑→增大β或加正则。',
+      'Latent trajectory可视化: ①用PCA将z降维到2D ②画z_t的轨迹线。好的latent dynamics应产生平滑轨迹(无跳跃、无原地振荡)。跳跃说明transition model没学好。'
+    ],
+    risks: ['posterior collapse → latent 退化为噪声', 'β 选取不当'],
+    paper: null,
+    resources: [
+      { label: 'VAE 原始论文 (Kingma & Welling 2013)', url: 'https://arxiv.org/abs/1312.6114', note: '重点: Section 2.3 reparameterization trick。难点: 附录B的KL推导' }
+    ],
+    resourceNotes: 'VAE的关键trick: ①先不加β训reconstruction，再逐步增大KL权重(warm-up) ②encoder输出log σ²而非σ防止为负 ③monitor KL collapse(KL→0=posterior collapse)。',
+    dailyTasks: [
+      { day: 1, title: 'VAE 推导 (必须熟练)', points: ['encoder / decoder', 'ELBO 与 VAE loss 关系'], tasks: ['手写 VAE loss 推导'], criteria: ['理解每一项的含义'], risks: [] },
+      { day: 2, title: '实现 VAE Encoder', points: ['输出 μ 和 log σ²'], tasks: ['实现 encoder: x → μ, logvar'], criteria: ['shape 检查通过'], risks: [] },
+      { day: 3, title: '实现 VAE Decoder + Reparameterization', points: ['z = μ + σ·ε'], tasks: ['完整 VAE forward', '训练 MNIST'], criteria: ['重建图像可辨识'], risks: ['reparam 实现错误 → 梯度不流动'] },
+      { day: 4, title: 'Latent Interpolation', points: ['在两个 latent 向量间插值'], tasks: ['生成插值图像序列'], criteria: ['过渡平滑（不是跳跃）'], risks: [] },
+      { day: 5, title: 'Latent Dynamics 思想', points: ['z_t → z_{t+1} 预测'], tasks: ['在 latent space 训练简单 transition model'], criteria: ['latent 轨迹可预测'], risks: [] },
+      { day: 6, title: 'RNN + VAE 初版 World Model', points: ['V 模块: VAE 编码', 'M 模块: RNN 预测 latent'], tasks: ['整合 VAE + RNN'], criteria: ['latent rollout 轨迹平滑'], risks: ['两头训练不稳定'] },
+      { day: 7, title: '总结 + 可视化', points: ['画 latent space (PCA/t-SNE)', '画 latent trajectory'], tasks: ['完整实验报告'], criteria: ['可视化清晰'], risks: [] }
+    ]
+  },
+  {
+    id: 4, phase: 'vae',
+    title: 'Transformer 动力学建模',
+    subtitle: '自回归序列生成与世界模型',
+    points: ['Transformer 作为动力系统', 'causal masking', 'autoregressive world model', 'sequence forecasting'],
+    formulas: ['p(x) = Π_t p(x_t | x_{<t}) — 自回归分解', 'causal mask: 确保时刻 t 只看 ≤ t'],
+    criteria: ['实现 autoregressive transformer', '能生成长序列 (>100 tokens)', 'perplexity 合理'],
+    criteriaAnswers: [
+      'Autoregressive transformer核心: ①causal mask用torch.triu(ones, diagonal=1)做上三角mask ②训练时整个序列并行计算(teacher forcing) ③推理时逐token生成。loss用CrossEntropy，输入x_{1:T-1}预测x_{2:T}。',
+      '长序列生成技巧: ①temperature控制随机性(0.7-1.0) ②top-k/top-p采样防止退化 ③如超过200 tokens质量下降→检查位置编码是否有外推能力。',
+      '合理perplexity: 字符级<5, 词级<50(取决于vocab大小)。perplexity = exp(cross_entropy_loss)，表示模型在每个位置的平均"困惑度"。'
+    ],
+    risks: ['causal mask 错误 → 信息泄露', '长序列生成质量下降'],
+    paper: null,
+    resources: [
+      { label: 'minGPT (Karpathy)', url: 'https://github.com/karpathy/minGPT', note: '重点: model.py的CausalSelfAttention实现。难点: 理解为何要用register_buffer存储causal mask' }
+    ],
+    resourceNotes: 'Transformer作为world model的核心优势: self-attention天然捕获长程依赖，比RNN更适合生物序列中远距离残基相互作用。',
+    dailyTasks: [
+      { day: 1, title: 'Transformer 作为动力系统', points: ['self-attention = 非局部状态更新', '位置编码 = 时序标记'], tasks: ['重新理解 Transformer 的时间维度'], criteria: ['能从动力系统视角解释 Transformer'], risks: [] },
+      { day: 2, title: 'Causal Masking', points: ['上三角 mask', '确保因果性'], tasks: ['实现 causal mask 矩阵'], criteria: ['mask 可视化正确'], risks: ['mask 方向反了 → 信息泄露'] },
+      { day: 3, title: 'Sequence Forecasting Transformer', points: ['输入 x_{1:t} → 预测 x_{t+1}'], tasks: ['实现 autoregressive training loop'], criteria: ['loss 下降'], risks: [] },
+      { day: 4, title: '训练 Autoregressive World Model', points: ['数据准备', '训练策略'], tasks: ['在序列数据上训练'], criteria: ['perplexity 可接受'], risks: [] },
+      { day: 5, title: '序列生成', points: ['从模型采样'], tasks: ['实现 temperature sampling'], criteria: ['生成序列非随机'], risks: [] },
+      { day: 6, title: '生成长序列测试', points: ['100+ tokens 生成'], tasks: ['测试生成质量 vs 长度'], criteria: ['不退化'], risks: ['长序列退化 → 需要更好的位置编码'] },
+      { day: 7, title: '总结', points: ['对比 RNN vs Transformer 作为 world model'], tasks: ['写对比报告'], criteria: ['结论清晰'], risks: [] }
+    ]
+  },
+  {
+    id: 5, phase: 'rl',
+    title: 'Model-Based RL',
+    subtitle: '世界模型的核心来源：学习环境的动力学',
+    points: ['MDP: (S,A,P,R,γ)', 'dynamics model p(s\'|s,a)', 'policy vs model 区别', 'world model + random policy rollout'],
+    formulas: ['MDP 五元组: (S, A, P, R, γ)', 'P(s_{t+1}|s_t, a_t) — 环境动力学'],
+    criteria: ['在 Gym 环境上训练 dynamics model', '能预测环境未来状态（rollout）', '理解 model-based RL 的样本效率优势'],
+    criteriaAnswers: [
+      'Dynamics model训练: 收集(state, action, next_state)三元组，用MSE loss训练神经网络f(s,a)→s\'。关键: ①数据要覆盖足够的状态空间(random policy收集) ②归一化输入输出(StandardScaler) ③ensemble多个模型可提高鲁棒性。',
+      'Rollout质量评估: 在5个test episode上对比真实vs预测轨迹，MSE应稳定(不指数增长)。如果MSE随步数指数增长→compounding error→需要更好的dynamics model或更短的rollout horizon。',
+      'Model-based RL的样本效率: 因为dynamics model在学"世界如何运转"(与环境交互无关)，可以在learned model中做planning而不消耗真实样本。典型优势: model-based需要~10³样本而model-free需要~10⁶(在简单环境中)。'
+    ],
+    risks: ['dynamics model 误差累积 → rollout 偏差越来越大'],
+    paper: null,
+    resources: [
+      { label: 'Sutton & Barto Ch.8', url: 'http://incompleteideas.net/book/the-book-2nd.html', note: '重点: 8.2节Dyna-Q架构。难点: 理解planning vs learning的区别' },
+      { label: 'Gymnasium 文档', url: 'https://gymnasium.farama.org/', note: '重点: Env API(step/reset)。难点: 自定义环境的observation/action space定义' }
+    ],
+    resourceNotes: 'Model-based RL是world model的理论起源——如果model能预测环境，就无需真实环境来训练policy。这是"世界模型"名字的由来。',
+    dailyTasks: [
+      { day: 1, title: 'MDP 结构', points: ['state / action / reward', 'transition probability'], tasks: ['用 Gym 环境理解 MDP'], criteria: ['能写出任意环境的 MDP 五元组'], risks: [] },
+      { day: 2, title: 'Dynamics Model 定义', points: ['p(s_{t+1}|s_t, a_t)'], tasks: ['构建简单的 dynamics 网络'], criteria: ['网络输入输出 shape 正确'], risks: [] },
+      { day: 3, title: '收集训练数据', points: ['random policy 探索环境'], tasks: ['在 CartPole/MountainCar 收集 transitions'], criteria: ['数据集包含各种状态转移'], risks: [] },
+      { day: 4, title: '训练 Dynamics Model', points: ['监督学习: 预测 s_{t+1}'], tasks: ['训练 + 验证'], criteria: ['validation loss 收敛'], risks: [] },
+      { day: 5, title: 'Policy vs Model 区别', points: ['policy: 选动作', 'model: 预测后果'], tasks: ['实现 random policy rollout'], criteria: ['理解两者独立'], risks: [] },
+      { day: 6, title: 'World Model + Random Policy Rollout', points: ['用学到的 model 模拟环境'], tasks: ['random policy 在 learned model 中 rollout'], criteria: ['rollout 轨迹与真实环境接近'], risks: ['误差累积导致轨迹发散'] },
+      { day: 7, title: '总结', points: ['model-based RL 完整流程'], tasks: ['画流程图 + 写报告'], criteria: ['可作为 Week 6 的预备知识'], risks: [] }
+    ]
+  },
+  {
+    id: 6, phase: 'rl',
+    title: 'Dreamer 结构拆解（关键周）',
+    subtitle: 'Latent Imagination: 在潜空间中规划',
+    points: ['Dreamer 三组件: encoder / dynamics / reward', 'latent rollout imagination', 'actor-critic in latent space', '简化 Dreamer 复现'],
+    formulas: ['Encoder: z_t ~ q(z_t|o_t)', 'Dynamics: ẑ_t = f(ẑ_{t-1}, a_{t-1})', 'Reward: r̂_t = R(ẑ_t)'],
+    criteria: ['理解 Dreamer 各组件职责', 'latent rollout > 10 steps 稳定', '复现简化版 Dreamer'],
+    risks: ['三组件联合训练不稳定', 'reward prediction 不准确 → 策略偏差'],
+    paper: 'Hafner et al., 2020, "Dreamer: Mastering Atari with Latent Imagination"',
+    paperUrl: 'https://arxiv.org/abs/2012.13304',
+    criteriaAnswers: [
+      'Dreamer三组件: ①Representation: encoder q(z|o)将观测压缩为latent ②Transition: dynamics p(z_t|z_{t-1},a_{t-1})在latent space预测 ③Reward: r̂_t = MLP(z_t)。三者联合训练，总loss = recon_loss + KL_loss + reward_loss。',
+      'Latent rollout >10 steps稳定: 用学到的dynamics在latent space中自回归rollout，ẑ_t = dynamics(ẑ_{t-1}, a_{t-1})。稳定指标: ẑ_t的norm不爆炸(<100)，且decoder(ẑ_t)重建的观测有意义。技巧: 训练时加小噪声到z。',
+      '简化Dreamer: ①用MLP替代CNN(适合简单环境) ②去掉actor-critic先用random policy测试dynamics ③reward model简化为线性层。关键指标: latent rollout的MSE在10步内<训练MSE的2倍。'
+    ],
+    resources: [
+      { label: 'Dreamer 论文 (v1/v2/v3)', url: 'https://arxiv.org/abs/2012.13304', note: '重点: Figure 2的架构图和Algorithm 1。难点: KL balancing技巧(对prior和posterior用不同权重)' },
+      { label: 'Dreamer 官方代码', url: 'https://github.com/danijar/dreamer', note: '重点: dreamer.py的WorldModel类。难点: 代码高度抽象，建议先看dreamerv2的JAX版本' }
+    ],
+    resourceNotes: 'Dreamer是World Model的工程巅峰——把VAE+RNN+RL完美整合。理解Dreamer=通关世界模型。最难的工程问题: encoder/dynamics/reward三者的loss平衡。',
+    dailyTasks: [
+      { day: 1, title: 'Dreamer 论文结构解析', points: ['world model components', 'latent imagination'], tasks: ['精读 Dreamer Figure 1-2'], criteria: ['能画出三组件架构图'], risks: [] },
+      { day: 2, title: 'Encoder 实现', points: ['CNN/MLP → latent z'], tasks: ['实现 encoder q(z|o)'], criteria: ['latent 维度合理'], risks: [] },
+      { day: 3, title: 'Dynamics Model 实现', points: ['RNN/GRU 在 latent space'], tasks: ['实现 ẑ_t = f(ẑ_{t-1}, a_{t-1})'], criteria: ['latent rollout 不崩塌'], risks: ['这步最容易出问题'] },
+      { day: 4, title: 'Reward Model + 联合训练', points: ['r̂_t = MLP(ẑ_t)'], tasks: ['联合训练 encoder + dynamics + reward'], criteria: ['三个 loss 都下降'], risks: [] },
+      { day: 5, title: 'Latent Rollout Imagination', points: ['在 latent space 中模拟'], tasks: ['实现 latent rollout (无真实观测)'], criteria: ['latent trajectory 平滑'], risks: ['>5 steps 发散 → dynamics 没学好'] },
+      { day: 6, title: 'Actor-Critic in Latent Space', points: ['policy 和 value 都在 latent 中学习'], tasks: ['实现简化 actor-critic'], criteria: ['reward 上升'], risks: [] },
+      { day: 7, title: '简化 Dreamer 集成', points: ['端到端测试'], tasks: ['在简单环境跑通完整 pipeline'], criteria: ['>10 step rollout 稳定', 'reward 趋势正确'], risks: ['不稳定 → 逐步 debug 每个组件'] }
+    ]
+  },
+  {
+    id: 7, phase: 'system',
+    title: '世界模型系统化阶段',
+    subtitle: '统一框架 + 误差累积分析',
+    points: ['统一框架: latent z + transition + observation', 'exposure bias / compounding error', '训练稳定性技巧', 'scheduled sampling'],
+    formulas: ['统一形式: z_t = T(z_{t-1}, a_{t-1}), o_t = O(z_t)'],
+    criteria: ['能统一描述 VAE-RNN / Dreamer / Transformer WM', '理解 compounding error 的数学本质', '实现至少一种缓解策略'],
+    criteriaAnswers: [
+      '统一形式: 所有WM都可写为 z_t = Transition(z_{t-1}, a_{t-1}), o_t = Observation(z_t)。VAE-RNN的Transition是RNN+MDN，Dreamer是GRU，Transformer WM是causal self-attention。区别仅在Transition的实现方式。',
+      'Compounding error数学: 设单步误差ε，rollout到第T步的误差上界≈O(ε·L^T)其中L是dynamics的Lipschitz常数。当L>1时误差指数增长。缓解: ①缩短rollout horizon ②训练时加noise使模型学会修正 ③使用closed-loop control。',
+      'Scheduled sampling: 训练时以概率p用真实上一步、以概率1-p用模型预测作为输入。p从1.0逐步衰减到0.1(或固定p=0.5)。更高级: professor forcing(用GAN判别real vs generated)。'
+    ],
+    risks: ['不理解误差累积 → 永远无法 scale 到真实应用'],
+    paper: null,
+    resources: [
+      { label: 'Scheduled Sampling (Bengio et al.)', url: 'https://arxiv.org/abs/1506.03099', note: '重点: Section 3的sampling schedule设计。难点: 理解为何固定采样比退火采样更稳定' }
+    ],
+    resourceNotes: '这一周是"从工程回到理论"的关键——理解compounding error才能设计更好的world model。所有世界模型论文都在和这个问题搏斗。',
+    dailyTasks: [
+      { day: 1, title: '统一框架 (1)', points: ['所有 WM 都可写为 z→z\'→o'], tasks: ['用统一形式重写 Week 3/4/5/6 模型'], criteria: ['能对比各模型的异同'], risks: [] },
+      { day: 2, title: '统一框架 (2)', points: ['observation model vs transition model 解耦'], tasks: ['画出统一架构图'], criteria: ['图清晰完整'], risks: [] },
+      { day: 3, title: 'Error Accumulation 问题', points: ['exposure bias', 'train vs test 分布偏移'], tasks: ['定量测量 rollout error vs step'], criteria: ['有误差曲线图'], risks: [] },
+      { day: 4, title: 'Compounding Error 数学分析', points: ['误差随步数指数增长的理论分析'], tasks: ['推导 error bound'], criteria: ['理解为何长 rollout 必崩'], risks: [] },
+      { day: 5, title: 'Scheduled Sampling', points: ['训练时逐步增加 self-feed 比例'], tasks: ['实现 scheduled sampling'], criteria: ['rollout 质量改善'], risks: [] },
+      { day: 6, title: '训练稳定性技巧', points: ['gradient clipping', '学习率 warmup'], tasks: ['对比有无稳定性技巧的训练曲线'], criteria: ['训练曲线更平滑'], risks: [] },
+      { day: 7, title: '总结', points: ['整理本周分析'], tasks: ['写 error accumulation 分析报告'], criteria: ['可作为论文 related work 材料'], risks: [] }
+    ]
+  },
+  {
+    id: 8, phase: 'bio',
+    title: '生物数据接入',
+    subtitle: '从 Gym 环境到蛋白质/细胞状态',
+    points: ['protein sequence as time series', 'mutation 作为 transition 操作', '生物状态空间模型 z_{t+1}=f(z_t, mutation_t)'],
+    formulas: ['z_{t+1} = f(z_t, mutation_t) — 蛋白进化作为动力系统'],
+    criteria: ['构建 protein mutation trajectory 数据集', 'ESM embedding → latent dynamics 对接成功'],
+    criteriaAnswers: [
+      'Protein mutation trajectory数据集: ①从UniProt获取同源蛋白家族 ②按进化距离排序构造伪时间序列 ③每条轨迹包含: [(seq_0, func_0), (seq_1, func_1), ..., (seq_T, func_T)]。数据结构: List[Dict{seq, mutations, time}]。',
+      'ESM→latent dynamics对接: ESM提取per-sequence embedding作为z_0，然后dynamics model预测z_t = f(z_{t-1}, embed(mutation_t))。关键: mutation encoding用one-hot或learnable embedding，与ESM embedding拼接后输入dynamics。'
+    ],
+    risks: ['生物"时间"往往是 pseudo-time → 需谨慎定义'],
+    paper: null,
+    resources: [
+      { label: 'ESM GitHub', url: 'https://github.com/facebookresearch/esm', note: '重点: esm/extract.py的embedding提取。难点: batch转换器对不同长度序列的padding处理' },
+      { label: 'UniProt', url: 'https://www.uniprot.org/', note: '重点: REST API查询蛋白家族。难点: 大规模数据的速率限制' }
+    ],
+    resourceNotes: '生物数据接入的关键：伪时间的定义决定了model学到什么。进化时间(序列差异) vs 功能时间(功能变化速度)——两者可能不同步。',
+    dailyTasks: [
+      { day: 1, title: 'Protein Sequence as Time Series', points: ['进化轨迹 = 时间序列', '伪时间概念'], tasks: ['定义"蛋白时间序列"的数据结构'], criteria: ['数据结构合理'], risks: ['伪时间定义不当 → 后续无意义'] },
+      { day: 2, title: 'Mutation 作为 Transition', points: ['点突变 / 插入 / 删除 = 状态转移'], tasks: ['构建 mutation transition 数据集'], criteria: ['数据格式与 WM 兼容'], risks: [] },
+      { day: 3, title: 'ESM Embedding 提取', points: ['protein → fixed-dim vector'], tasks: ['批量提取 ESM embedding'], criteria: ['embedding 质量可接受'], risks: [] },
+      { day: 4, title: '构建生物状态空间模型 (1)', points: ['z_{t+1} = f(z_t, mutation_t)'], tasks: ['设计 transition 网络'], criteria: ['网络设计合理'], risks: [] },
+      { day: 5, title: '构建生物状态空间模型 (2)', points: ['训练 + 验证'], tasks: ['训练 transition model'], criteria: ['loss 收敛'], risks: ['数据太少 → 过拟合'] },
+      { day: 6, title: 'ESM → Latent Dynamics 对接', points: ['embedding 作为初始 z'], tasks: ['端到端测试'], criteria: ['pipeline 跑通'], risks: [] },
+      { day: 7, title: '总结', points: ['整理本周构建'], tasks: ['画 data flow 图'], criteria: ['文档清晰'], risks: [] }
+    ]
+  },
+  {
+    id: 9, phase: 'bio',
+    title: '生物 World Model（核心应用）',
+    subtitle: '突变轨迹预测：从序列到功能变化',
+    points: ['ESM embedding → latent dynamics → function prediction', 'mutation trajectory prediction', 'latent space 可解释性分析'],
+    formulas: ['mutation trajectory: z_0 → z_1 → ... → z_T', 'Δfunction = g(z_T) - g(z_0)'],
+    criteria: ['能预测突变影响趋势 (ΔΔG / functional change)', 'latent space 可视化有生物意义', '与已知实验数据对比'],
+    criteriaAnswers: [
+      'ΔΔG预测: 用WM rollout得到z_T后，ΔΔG_pred = g(z_T) - g(z_0)，其中g是function prediction head。评估指标: Pearson r和Spearman ρ与实验ΔΔG。正负号正确率>70%即为初步可用。',
+      'Latent space生物意义: ①PCA可视化latent vectors按蛋白家族/功能聚类 ②检查PC1是否对应某个已知生物性质(如疏水性、大小) ③latent traversal: 沿某维度移动z，观察decoded序列的变化是否有规律。',
+      '与实验数据对比: 用ProTherm/FireProt作为ground truth，计算predicted vs experimental的scatter plot。预期: 趋势对了就行(r>0.3已是不错的开始)，精确数值预测需要更多数据。'
+    ],
+    risks: ['latent space 不解释 → 无法用于生物发现', '预测精度不足以指导实验'],
+    paper: null,
+    resources: [],
+    resourceNotes: '第9周是整条路线的"论文产出点"——如果latent space有生物意义且预测优于baseline，这就是一个可发表的最小创新单元。',
+    dailyTasks: [
+      { day: 1, title: '数据集构建', points: ['收集已知突变效应数据'], tasks: ['从 ProTherm/FireProt 等下载数据'], criteria: ['数据集可用'], risks: [] },
+      { day: 2, title: 'Latent Dynamics 训练', points: ['在生物 latent space 中训练 dynamics'], tasks: ['训练 ESM-latent transition model'], criteria: ['latent rollout 合理'], risks: [] },
+      { day: 3, title: 'Function Prediction Head', points: ['从 latent state 预测功能'], tasks: ['训练 g(z_t) → function score'], criteria: ['预测值有区分度'], risks: [] },
+      { day: 4, title: 'Mutation Trajectory Prediction', points: ['给定突变序列 → 预测功能变化轨迹'], tasks: ['端到端测试'], criteria: ['trajectory 趋势合理'], risks: [] },
+      { day: 5, title: 'Latent Space 可解释性', points: ['PCA/t-SNE 可视化', 'latent dimension 与生物性质关联'], tasks: ['可视化 + 分析'], criteria: ['有生物意义的聚类/方向'], risks: ['latent space 随机 → 无生物意义'] },
+      { day: 6, title: '与实验数据对比', points: ['预测 vs 实验 ΔΔG'], tasks: ['Spearman/Pearson correlation'], criteria: ['相关性 > 0.3（初步方向）'], risks: ['相关性低 → 模型或数据问题'] },
+      { day: 7, title: '总结 + 实验报告', points: ['完整 pipeline 文档'], tasks: ['写实验报告 + GitHub'], criteria: ['可复现'], risks: [] }
+    ]
+  },
+  {
+    id: 10, phase: 'bio',
+    title: '单细胞 / 时间序列扩展',
+    subtitle: 'Cell State Dynamics Model',
+    points: ['RNA velocity 概念', 'pseudo-time / real-time 区分', 'cell state transition model', 'gene expression dynamics'],
+    formulas: ['RNA velocity: ds/dt = v(s) — 细胞状态变化率', 'cell transition: s_{t+1} = f(s_t, perturbation)'],
+    criteria: ['构建 cell state dynamics model', '能预测 differentiation trajectory 方向', '与 RNA velocity 对比验证'],
+    criteriaAnswers: [
+      'Cell state dynamics: 输入cell表达向量s_t，WM预测s_{t+1}=f(s_t)。用pseudo-time排序的相邻细胞对作为训练数据。关键: 归一化表达矩阵(log1p+scale)，批次效应校正(Harmony/Scanorama)。',
+      'Differentiation trajectory: 从起点细胞(干细胞)开始WM rollout，轨迹应朝向分化终点。评估: ①rollout终点与已知分化终点的cosine similarity ②轨迹是否通过已知的中间状态。',
+      '与RNA velocity对比: RNA velocity给出ds/dt方向，WM给出s_{t+1}预测。比较: ①velocity方向与WM预测方向的cosine similarity >0.5为合理 ②不一致的区域提示WM学到了velocity未捕获的信号(可能是优势也可能是噪声)。'
+    ],
+    risks: ['pseudo-time 定义是领域核心争议', '数据噪声大 → 信号弱'],
+    paper: null,
+    resources: [
+      { label: 'scVelo 文档', url: 'https://scvelo.readthedocs.io/', note: '重点:动力学模型(steady-state vs dynamical)。难点: 理解spliced/unspliced ratio的含义' },
+      { label: '10x Genomics 数据集', url: 'https://www.10xgenomics.com/resources/datasets', note: '重点: 5k/10k PBMC数据集适合入门。难点: 不同组织/物种的数据格式差异' }
+    ],
+    resourceNotes: '单细胞是world model最自然的生物应用——细胞状态转移天然是动力系统。但pseudo-time的定义直接影响WM学到的动力学，这是领域最大的methodological challenge。',
+    dailyTasks: [
+      { day: 1, title: 'RNA Velocity 理解', points: ['spliced vs unspliced', '转录动力学'], tasks: ['阅读 RNA velocity 核心论文'], criteria: ['能解释 velocity 的生物学意义'], risks: [] },
+      { day: 2, title: '单细胞数据加载', points: ['h5ad 格式', 'gene expression matrix'], tasks: ['用 scanpy 加载并预处理'], criteria: ['数据清洗完成'], risks: [] },
+      { day: 3, title: 'Pseudo-time 排序', points: ['diffusion pseudotime'], tasks: ['计算 pseudo-time 并排序细胞'], criteria: ['排序有生物意义'], risks: ['pseudo-time 定义争议'] },
+      { day: 4, title: 'Cell State Dynamics Model (1)', points: ['s_{t+1} = f(s_t) 建模'], tasks: ['设计 cell state transition 网络'], criteria: ['网络设计合理'], risks: [] },
+      { day: 5, title: 'Cell State Dynamics Model (2)', points: ['训练 + rollout'], tasks: ['训练并评估'], criteria: ['predicted trajectory 与 pseudo-time 一致'], risks: [] },
+      { day: 6, title: '与 RNA Velocity 对比', points: ['velocity 方向 vs model 预测方向'], tasks: ['定量对比'], criteria: ['方向一致性合理'], risks: [] },
+      { day: 7, title: '总结', points: ['整理两种动力学 (protein vs cell)'], tasks: ['写对比报告'], criteria: ['清晰'], risks: [] }
+    ]
+  },
+  {
+    id: 11, phase: 'system',
+    title: '系统优化与工程化',
+    subtitle: 'DDP 训练 + 混合精度 + Rollout 加速',
+    points: ['DDP 训练 world model', 'mixed precision rollout', 'batch rollout 加速', '模型部署'],
+    formulas: ['effective_batch = batch × accumulation × n_gpus'],
+    criteria: ['多 GPU 训练 world model', '显存优化 >30%', 'rollout 速度提升'],
+    criteriaAnswers: [
+      'DDP训练WM: model = DDP(model, device_ids=[local_rank])。WM的特殊性: dynamics model通常很小，通信开销占比大→考虑用gradient accumulation增大effective batch而非多GPU。验证: 多GPU loss与单GPU一致(误差<1e-4)。',
+      '显存优化: ①AMP: with autocast()→显存降30-50% ②gradient checkpointing→用计算换显存 ③序列长度分段→长序列分chunk训练。目标: 原本OOM的batch size现在能跑。',
+      'Rollout加速: ①batch rollout: 同时模拟B条轨迹 ②预计算ESM embedding避免重复 ③用torch.compile()(PyTorch 2.0+)。速度提升目标: rollout throughput >2x baseline。'
+    ],
+    risks: ['分布式训练引入新 bug', 'fp16 精度损失 → rollout 质量下降'],
+    paper: null,
+    resources: [],
+    resourceNotes: '工程优化是"从能跑到能用的最后一公里"。WM的rollout是推理瓶颈——batch rollout比模型训练本身更值得优化。',
+    dailyTasks: [
+      { day: 1, title: 'DDP 训练 World Model', points: ['多 GPU 并行'], tasks: ['将 world model 改为 DDP'], criteria: ['多 GPU 训练成功'], risks: [] },
+      { day: 2, title: 'Mixed Precision', points: ['fp16/bf16'], tasks: ['AMP 集成到 world model 训练'], criteria: ['显存下降 >30%'], risks: ['loss NaN'] },
+      { day: 3, title: 'Batch Rollout 加速', points: ['向量化 rollout'], tasks: ['实现 batch rollout（同时跑多条轨迹）'], criteria: ['速度提升显著'], risks: [] },
+      { day: 4, title: 'Checkpoint 与恢复', points: ['训练中断恢复'], tasks: ['实现完整 checkpoint 机制'], criteria: ['可无缝恢复训练'], risks: [] },
+      { day: 5, title: '性能 Profiling', points: ['找出瓶颈'], tasks: ['PyTorch Profiler 分析'], criteria: ['知道时间/显存瓶颈在哪'], risks: [] },
+      { day: 6, title: '优化迭代', points: ['根据 profiling 结果优化'], tasks: ['针对性优化瓶颈'], criteria: ['有可测量的改善'], risks: [] },
+      { day: 7, title: '总结', points: ['工程化清单'], tasks: ['写 deployment guide'], criteria: ['他人可用'], risks: [] }
+    ]
+  },
+  {
+    id: 12, phase: 'project',
+    title: '项目级输出（三选一）',
+    subtitle: 'Protein / Single-Cell / Hybrid World Model',
+    points: ['A. Protein WM: sequence+mutation → function trajectory', 'B. Single-cell WM: cell state → differentiation', 'C. Hybrid: sequence+structure dynamics'],
+    formulas: ['A: ΔG_trajectory = WM(seq, mutations)', 'B: fate = WM(cell_state, time)', 'C: structure_t = WM(sequence_t)'],
+    criteria: ['GitHub 可复现', '实验日志完整', '与 baseline 对比', 'README 含运行说明'],
+    criteriaAnswers: [
+      '可复现标准: ①environment.yml/requirements.txt包含所有依赖及版本 ②单命令运行(python main.py或bash run.sh) ③随机种子固定 ④README中说明预期运行时间和输出。',
+      '实验日志: 用W&B/TensorBoard记录所有metrics，包含: loss曲线、rollout MSE vs step、latent space可视化、超参数。每个实验有唯一标识和简短描述。',
+      'Baseline对比: 表格包含Method | AUROC | F1 | MCC | Pearson r | Spearman ρ等指标。Baseline至少包括: ①简单MLP ②ESM frozen + linear ③如果适用，与已发表方法对比。',
+      'README结构: ①Introduction(问题定义) ②Installation ③Usage(数据准备→训练→评估) ④Results(主要表格+关键图) ⑤Citation。目标是新读者5分钟内能跑通。'
+    ],
+    risks: ['范围过大 → 无法按时完成', '只复现不创新 → 缺乏学术价值'],
+    paper: null,
+    resources: [],
+    dailyTasks: [
+      { day: 1, title: '选题与规划', points: ['三选一并确定范围'], tasks: ['写项目 proposal (1 page)'], criteria: ['范围明确可执行'], risks: ['范围过大'] },
+      { day: 2, title: '数据准备', points: ['收集 + 预处理'], tasks: ['数据集构建完成'], criteria: ['数据可用'], risks: [] },
+      { day: 3, title: 'Baseline 实现', points: ['简单但合理的 baseline'], tasks: ['实现 baseline'], criteria: ['baseline 有合理性能'], risks: [] },
+      { day: 4, title: 'World Model 实现', points: ['核心 model 实现'], tasks: ['实现并训练 WM'], criteria: ['WM 优于 baseline'], risks: [] },
+      { day: 5, title: '评估与分析', points: ['多指标评估'], tasks: ['完整评估 + 消融实验'], criteria: ['有明确结论'], risks: [] },
+      { day: 6, title: '可视化与文档', points: ['论文级图表'], tasks: ['制作所有图表', '写 README'], criteria: ['图表可直接用于报告'], risks: [] },
+      { day: 7, title: '最终输出', points: ['GitHub + 报告'], tasks: ['Push 代码', '写 final report'], criteria: ['可复现 + 可展示'], risks: [] }
+    ]
+  }
+]
+
+// Helper
+function getWeeks() {
+  return currentTrack === 'worldmodel'
+    ? weeksWorldModelSys
+    : weeksBioML;
+}
+
+function getStorageKey() {
+  return currentTrack === 'worldmodel'
+    ? 'wm-sys-learning-progress'
+    : 'bio-ml-learning-progress';
+}
+// ===== STATE =====
+let state = loadState()
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(getStorageKey());
+    if (saved) return JSON.parse(saved);
+  } catch(e) {}
+  // Default: empty state
+  const s = { weekCompleted: {}, checkItems: {}, dayCheckItems: {} };
+  getWeeks().forEach(w => {
+    s.weekCompleted[w.id] = false;
+    s.checkItems[w.id] = {};
+    w.criteria.forEach((_, i) => { s.checkItems[w.id][i] = false; });
+    // Daily task check state
+    if (w.dailyTasks) {
+      s.dayCheckItems[w.id] = {};
+      w.dailyTasks.forEach((d, di) => {
+        s.dayCheckItems[w.id][di] = {};
+        d.criteria.forEach((_, ci) => { s.dayCheckItems[w.id][di][ci] = false; });
+      });
+    }
+  });
+  return s;
+}
+
+function saveState() {
+  localStorage.setItem(getStorageKey(), JSON.stringify(state));
+  updateStats();
+}
+
+// ===== SIDEBAR TIMELINE =====
+let selectedWeekId = null;
+
+const phaseMetaBio = [
+  { phase: 'foundation', label: '基础阶段 · PyTorch → Transformer', range: '第2-4周' },
+  { phase: 'bio', label: '生物转向 · 序列建模 → 结构预测', range: '第5-7周' },
+  { phase: 'advanced', label: '进阶训练 · 微调 → 分布式优化', range: '第8-11周' },
+  { phase: 'project', label: '项目产出 · 完整可复现项目', range: '第12周' },
+  { phase: 'worldmodel', label: '世界模型 · 原理 → 生物模拟', range: '第13-15周' }
+];
+const phaseMetaWM = [
+  { phase: 'math', label: '数学基础 · ELBO / SSM / RNN', range: '第1-2周' },
+  { phase: 'vae', label: 'VAE + Transformer 动力学建模', range: '第3-4周' },
+  { phase: 'rl', label: 'Model-Based RL + Dreamer 拆解', range: '第5-6周' },
+  { phase: 'system', label: '系统化 + 误差累积 + 工程优化', range: '第7, 11周' },
+  { phase: 'bio', label: '生物应用 · Protein / Cell WM', range: '第8-10周' },
+  { phase: 'project', label: '项目产出 · 三选一 WM 项目', range: '第12周' }
+];
+
+function buildTimeline() {
+  const container = document.getElementById('sidebarTimeline');
+  const phaseMeta = currentTrack === 'worldmodel' ? phaseMetaWM : phaseMetaBio;
+  const weeks = getWeeks();
+  // Current week = first incomplete
+  const currentWeekId = weeks.find(w => !state.weekCompleted[w.id])?.id || null;
+  let html = '';
+
+  phaseMeta.forEach(pm => {
+    const phaseWeeks = weeks.filter(w => w.phase === pm.phase);
+    if (phaseWeeks.length === 0) return;
+    const allPhaseDone = phaseWeeks.every(w => state.weekCompleted[w.id]);
+
+    // Phase header
+    html += `<div class="tl-phase">`;
+    html += `<span class="tl-dot" style="${allPhaseDone ? 'background:var(--success);border-color:var(--success);' : ''}"></span>`;
+    html += `${pm.label}`;
+    html += allPhaseDone ? ' ✓' : '';
+    html += `</div>`;
+
+    // Week nodes
+    phaseWeeks.forEach((w, idx) => {
+      const done = state.weekCompleted[w.id];
+      const isActive = w.id === selectedWeekId;
+      const isCurrent = !done && w.id === currentWeekId && !isActive;
+
+      let cls = 'tl-node';
+      if (done) cls += ' done';
+      if (isActive) cls += ' active';
+      else if (isCurrent) cls += ' current';
+
+      html += `<div class="${cls}" data-week-id="${w.id}" onclick="selectWeek(${w.id})">`;
+      html += `<div class="tl-marker">`;
+      html += `<span class="tl-dot"></span>`;
+      if (idx < phaseWeeks.length - 1 || pm !== phaseMeta[phaseMeta.length - 1]) {
+        html += `<span class="tl-line"></span>`;
+      }
+      html += `</div>`;
+      html += `<div class="tl-text">`;
+      html += `<span class="tl-title">第${w.id}周 · ${w.title}</span>`;
+      html += `<span class="tl-sub">${w.subtitle}</span>`;
+      html += `</div></div>`;
+    });
+  });
+
+  container.innerHTML = html;
+
+  // Scroll to active/current node
+  setTimeout(() => {
+    const activeEl = container.querySelector('.tl-node.active') || container.querySelector('.tl-node.current');
+    if (activeEl) {
+      activeEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+  }, 100);
+}
+
+// ===== HOMEPAGE =====
+function renderHomepage() {
+  const inner = document.getElementById('contentInner');
+  const trackLabel = currentTrack === 'worldmodel' ? '世界模型系统学习' : '生物大模型';
+  const trackEmoji = currentTrack === 'worldmodel' ? '🌍' : '🧬';
+  const weeks = getWeeks();
+  const phaseMeta = currentTrack === 'worldmodel' ? phaseMetaWM : phaseMetaBio;
+  const totalWeeks = weeks.length;
+  const completedWeeks = weeks.filter(w => state.weekCompleted[w.id]).length;
+  const currentWeek = weeks.find(w => !state.weekCompleted[w.id]);
+  const currentId = currentWeek?.id || weeks[weeks.length - 1]?.id;
+  const pct = totalWeeks > 0 ? Math.round((completedWeeks / totalWeeks) * 100) : 0;
+
+  // Stats for the other track
+  const otherTrack = currentTrack === 'worldmodel' ? 'bio' : 'worldmodel';
+  const otherWeeks = otherTrack === 'worldmodel' ? weeksWorldModelSys : weeksBioML;
+  const otherKey = otherTrack === 'worldmodel' ? 'wm-sys-learning-progress' : 'bio-ml-learning-progress';
+  let otherState = null;
+  try { otherState = JSON.parse(localStorage.getItem(otherKey)); } catch(e) {}
+  const otherTotal = otherWeeks.length;
+  const otherDone = otherState ? otherWeeks.filter(w => otherState.weekCompleted?.[w.id]).length : 0;
+  const otherPct = otherTotal > 0 ? Math.round((otherDone / otherTotal) * 100) : 0;
+
+  let html = `<div class="homepage">`;
+
+  // Hero
+  html += `<div class="homepage-hero">`;
+  html += `<h2>${trackEmoji} ${trackLabel}</h2>`;
+  html += `<div class="hero-sub">${currentTrack === 'worldmodel' ? '从 ELBO 推导到生物世界模型 · 12周系统训练' : '从 PyTorch 到蛋白语言模型 · 第2-15周'}</div>`;
+  html += `<div class="hero-stats">`;
+  html += `<div class="hero-stat"><div class="hs-val">${pct}%</div><div class="hs-label">总进度</div></div>`;
+  html += `<div class="hero-stat"><div class="hs-val">${completedWeeks}/${totalWeeks}</div><div class="hs-label">已完成周</div></div>`;
+  html += `<div class="hero-stat"><div class="hs-val">第${currentId}周</div><div class="hs-label">当前进度</div></div>`;
+  html += `</div></div>`;
+
+  // Track cards
+  html += `<div class="track-cards">`;
+  // Current track card
+  html += `<div class="track-card active-track">`;
+  html += `<div class="tc-icon">${trackEmoji}</div>`;
+  html += `<h3>${trackLabel}</h3>`;
+  html += `<div class="tc-desc">${currentTrack === 'worldmodel' ? '概率建模 → VAE/Transformer动力学 → Model-Based RL → Dreamer → 生物WM' : 'PyTorch → Transformer → ESM/AlphaFold → 分布式训练 → 世界模型'}</div>`;
+  html += `<div class="tc-bar"><div class="tc-bar-fill" style="width:${pct}%"></div></div>`;
+  html += `<div class="tc-stat">${completedWeeks}/${totalWeeks} 周完成 · ${pct}%</div>`;
+  html += `</div>`;
+  // Other track card
+  const otherLabel = otherTrack === 'worldmodel' ? '🌍 世界模型系统学习' : '🧬 生物大模型';
+  const otherDesc = otherTrack === 'worldmodel' ? 'ELBO → Dreamer → 生物 World Model · 12周' : 'PyTorch → ESM → AlphaFold → 分布式 · 第2-15周';
+  html += `<div class="track-card" onclick="switchTrack('${otherTrack}')">`;
+  html += `<div class="tc-icon">${otherTrack === 'worldmodel' ? '🌍' : '🧬'}</div>`;
+  html += `<h3>${otherLabel}</h3>`;
+  html += `<div class="tc-desc">${otherDesc}</div>`;
+  html += `<div class="tc-bar"><div class="tc-bar-fill" style="width:${otherPct}%"></div></div>`;
+  html += `<div class="tc-stat">${otherDone}/${otherTotal} 周完成 · ${otherPct}% — 点击切换</div>`;
+  html += `</div>`;
+  html += `</div>`;
+
+  // Phase overview
+  html += `<div class="phase-overview"><h3>📊 阶段进度</h3>`;
+  phaseMeta.forEach(pm => {
+    const phaseWeeks = weeks.filter(w => w.phase === pm.phase);
+    if (phaseWeeks.length === 0) return;
+    const phaseDone = phaseWeeks.filter(w => state.weekCompleted[w.id]).length;
+    const phasePct = Math.round((phaseDone / phaseWeeks.length) * 100);
+    html += `<div class="phase-row" onclick="selectFirstIncomplete('${pm.phase}')">`;
+    html += `<span class="pr-label">${pm.label}</span>`;
+    html += `<div class="pr-bar"><div class="pr-bar-fill" style="width:${phasePct}%"></div></div>`;
+    html += `<span class="pr-pct">${phasePct}%</span>`;
+    html += `</div>`;
+  });
+  html += `</div>`;
+
+  // Quick nav
+  html += `<div class="quick-nav">`;
+  if (currentWeek) {
+    html += `<p>📌 当前进度：<strong>第${currentWeek.id}周 · ${currentWeek.title}</strong> — ${currentWeek.subtitle}</p>`;
+    html += `<button class="quick-nav-btn" onclick="selectWeek(${currentWeek.id})">继续学习 →</button>`;
+  } else {
+    html += `<p>🎉 全部完成！</p>`;
+    html += `<button class="quick-nav-btn" onclick="selectWeek(${weeks[0].id})">复习第${weeks[0].id}周 →</button>`;
+  }
+  html += `</div>`;
+
+  html += `</div>`;
+  inner.innerHTML = html;
+}
+
+function switchTrack(track) {
+  currentTrack = track;
+  state = loadState();
+  document.getElementById('sidebarSubtitle').textContent = track === 'worldmodel' ? '世界模型系统学习 · 12周' : '生物大模型 · 第2-15周';
+  document.querySelectorAll('.track-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.track === track);
+  });
+  selectedWeekId = null;
+  buildTimeline();
+  renderHomepage();
+  updateStats();
+}
+
+function selectFirstIncomplete(phase) {
+  const weeks = getWeeks();
+  const first = weeks.find(w => w.phase === phase && !state.weekCompleted[w.id]);
+  if (first) selectWeek(first.id);
+  else {
+    const any = weeks.find(w => w.phase === phase);
+    if (any) selectWeek(any.id);
+  }
+}
+
+// ===== WEEK SELECTION =====
+function selectWeek(weekId) {
+  selectedWeekId = weekId;
+  const w = getWeeks().find(x => x.id === weekId);
+  if (!w) return;
+
+  // Update sidebar
+  buildTimeline();
+
+  // Render week detail in content area
+  const inner = document.getElementById('contentInner');
+  const phaseMeta = currentTrack === 'worldmodel' ? phaseMetaWM : phaseMetaBio;
+  const pm = phaseMeta.find(p => p.phase === w.phase);
+  const trackLabel = currentTrack === 'worldmodel' ? '世界模型系统学习' : '生物大模型';
+
+  inner.innerHTML = `
+    <div class="breadcrumb">
+      ${trackLabel} / ${pm ? pm.label : w.phase} / <span>第${w.id}周 ${w.title}</span>
+      <button class="reset-btn" style="margin-left:auto;font-size:0.65rem;padding:3px 10px;" onclick="resetAll()">重置进度</button>
+    </div>
+    <div class="week-detail"></div>
+  `;
+  const detail = inner.querySelector('.week-detail');
+  const card = createWeekCard(w, true);
+  detail.appendChild(card);
+
+  updateStats();
+}
+
+// ===== RENDER =====
+function renderWeekDetail(w) {
+  const inner = document.getElementById('contentInner');
+  inner.innerHTML = '';
+  const card = createWeekCard(w, true);
+  inner.appendChild(card);
+}
+
+function createWeekCard(w, isDetail = false) {
+  const card = document.createElement('div');
+  card.className = 'week-card';
+  if (state.weekCompleted[w.id]) card.classList.add('completed');
+
+  // Determine if this is the current week
+  const allIds = getWeeks().map(x => x.id);
+  const firstIncomplete = allIds.find(id => !state.weekCompleted[id]);
+  if (w.id === firstIncomplete) card.classList.add('current');
+
+  let html = '';
+
+  // Header
+  html += `<div class="week-header">`;
+  html += `<div><div class="week-num">第 ${w.id} 周</div><div class="week-title">${w.title}</div><div style="font-size:0.8rem;color:var(--text-secondary);">${w.subtitle}</div></div>`;
+  html += `<div class="week-status${state.weekCompleted[w.id] ? ' done' : ''}" onclick="toggleWeek(${w.id})" title="标记整周完成">${state.weekCompleted[w.id] ? '✓' : ''}</div>`;
+  html += `</div>`;
+
+  // Key Points
+  html += `<div class="card-section"><h4><span class="icon">📌</span> 学习要点</h4><div class="tag-list">`;
+  w.points.forEach(p => {
+    const tagClass = p.includes('公式') || p.includes('math') ? 'tag math' : 'tag';
+    html += `<span class="${tagClass}">${p}</span>`;
+  });
+  html += `</div></div>`;
+
+  // Formulas
+  if (w.formulas.length > 0) {
+    html += `<div class="card-section"><h4><span class="icon">📐</span> 核心公式</h4>`;
+    w.formulas.forEach(f => {
+      html += `<div class="formula">${f}</div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Experiment
+  if (w.experiment) {
+    html += `<div class="card-section"><h4><span class="icon">🔬</span> 必做实验</h4>`;
+    html += `<div class="code-block">${escapeHTML(w.experiment)}</div>`;
+    html += `</div>`;
+  }
+
+  // Paper
+  if (w.paper) {
+    html += `<div class="card-section"><h4><span class="icon">📄</span> 必读论文</h4>`;
+    if (w.paperUrl) {
+      html += `<a href="${w.paperUrl}" target="_blank" rel="noopener" class="paper-link">↗ ${w.paper}</a>`;
+    } else {
+      html += `<span style="font-size:0.8rem;">${w.paper}</span>`;
+    }
+    html += `</div>`;
+  }
+
+  // Resources
+  if (w.resources && w.resources.length > 0) {
+    html += `<div class="card-section"><h4><span class="icon">🔗</span> 学习资源</h4>`;
+    html += `<div style="display:flex; flex-direction:column; gap:4px;">`;
+    w.resources.forEach(r => {
+      html += `<a href="${r.url}" target="_blank" rel="noopener" class="paper-link">↗ ${r.label}</a>`;
+      if (r.note) {
+        html += `<span style="font-size:0.65rem;color:var(--text-secondary);margin-left:12px;">${r.note}</span>`;
+      }
+    });
+    html += `</div>`;
+    if (w.resourceNotes) {
+      html += `<div style="font-size:0.68rem;color:var(--warning);margin-top:4px;padding:4px 8px;background:rgba(251,191,36,0.06);border-radius:4px;">💡 ${w.resourceNotes}</div>`;
+    }
+    html += `</div>`;
+  }
+
+  // Daily Tasks (for weeks that have them)
+  if (w.dailyTasks && w.dailyTasks.length > 0) {
+    const dailyCompleted = w.dailyTasks.every((d, di) =>
+      d.criteria.every((_, ci) => state.dayCheckItems[w.id]?.[di]?.[ci])
+    );
+    html += `<button class="daily-toggle" onclick="event.stopPropagation(); toggleDaily(${w.id})" id="daily-btn-${w.id}">`;
+    html += `<span class="arrow">▶</span> 每日任务 (${w.dailyTasks.length}天)`;
+    html += dailyCompleted ? ' ✓' : '';
+    html += `</button>`;
+    html += `<div class="daily-container" id="daily-${w.id}">`;
+
+    w.dailyTasks.forEach((d, di) => {
+      const dayDone = d.criteria.every((_, ci) => state.dayCheckItems[w.id]?.[di]?.[ci]);
+      html += `<div class="day-card" style="${dayDone ? 'border-color: var(--success); opacity: 0.85;' : ''}">`;
+      // Day header
+      html += `<div class="day-header">`;
+      html += `<span class="day-num">Day ${d.day}</span>`;
+      html += `<span class="day-title">${d.title}</span>`;
+      html += `</div>`;
+      // Learning points
+      if (d.points.length > 0) {
+        html += `<div class="day-section"><span class="day-label">学习要点</span>`;
+        html += `<span class="day-text">${d.points.join(' / ')}</span></div>`;
+      }
+      // Tasks
+      html += `<div class="day-section"><span class="day-label">必须完成</span><ul class="day-checklist">`;
+      d.tasks.forEach(t => {
+        html += `<li><span style="color:var(--warning);">▸</span> ${t}</li>`;
+      });
+      html += `</ul></div>`;
+      // Criteria checklist
+      html += `<div class="day-section"><span class="day-label">验收标准</span><ul class="day-checklist">`;
+      d.criteria.forEach((c, ci) => {
+        const checked = state.dayCheckItems[w.id]?.[di]?.[ci];
+        html += `<li onclick="event.stopPropagation(); toggleDayCheck(${w.id}, ${di}, ${ci})">`;
+        html += `<span class="day-check-box${checked ? ' checked' : ''}">${checked ? '✓' : ''}</span>`;
+        html += `<span style="${checked ? 'text-decoration:line-through;color:var(--text-secondary);' : ''}">${c}</span>`;
+        html += `</li>`;
+      });
+      html += `</ul></div>`;
+      // Risk
+      if (d.risks && d.risks.length > 0) {
+        d.risks.forEach(r => {
+          html += `<div class="day-risk">⚠ ${r}</div>`;
+        });
+      }
+      html += `</div>`;
+    });
+
+    html += `</div>`;
+  }
+
+  // Acceptance Criteria (checklist)
+  html += `<div class="card-section"><h4><span class="icon">✅</span> 验收标准</h4>`;
+  if (w.criteriaAnswers && w.criteriaAnswers.length > 0) {
+    html += `<button class="daily-toggle" style="margin-bottom:6px;font-size:0.68rem;padding:4px 10px;" onclick="event.stopPropagation(); toggleAnswers(${w.id})" id="ans-btn-${w.id}">`;
+    html += `<span class="arrow">▶</span> 查看参考答案</button>`;
+    html += `<div id="ans-${w.id}" class="daily-container" style="margin-bottom:6px;">`;
+    w.criteriaAnswers.forEach((a, i) => {
+      html += `<div style="font-size:0.7rem;color:var(--success);padding:4px 8px;margin:2px 0;background:rgba(52,211,153,0.06);border-radius:4px;">`;
+      html += `<span style="color:var(--accent);font-weight:600;">Q${i+1}:</span> ${w.criteria[i]}<br>`;
+      html += `<span style="color:var(--success);">✓ ${a}</span></div>`;
+    });
+    html += `</div>`;
+  }
+  html += `<ul class="checklist">`;
+  w.criteria.forEach((c, i) => {
+    const checked = state.checkItems[w.id] && state.checkItems[w.id][i];
+    html += `<li onclick="toggleCheck(${w.id}, ${i})">`;
+    html += `<span class="check-box${checked ? ' checked' : ''}">${checked ? '✓' : ''}</span>`;
+    html += `<span class="check-text${checked ? ' done' : ''}">${c}</span>`;
+    html += `</li>`;
+  });
+  html += `</ul></div>`;
+
+  // Risk
+  if (w.risks) {
+    w.risks.forEach(r => {
+      html += `<div class="risk-callout">⚠ ${r}</div>`;
+    });
+  }
+
+  card.innerHTML = html;
+  return card;
+}
+
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ===== ACTIONS =====
+function toggleWeek(weekId) {
+  state.weekCompleted[weekId] = !state.weekCompleted[weekId];
+  // If marking complete, also check all criteria
+  if (state.weekCompleted[weekId]) {
+    const w = getWeeks().find(x => x.id === weekId);
+    if (w) {
+      w.criteria.forEach((_, i) => { state.checkItems[weekId][i] = true; });
+    }
+  }
+  saveState();
+  if (selectedWeekId === weekId) selectWeek(weekId);
+  else { buildTimeline(); updateStats(); }
+}
+
+function toggleCheck(weekId, critIdx) {
+  if (!state.checkItems[weekId]) state.checkItems[weekId] = {};
+  state.checkItems[weekId][critIdx] = !state.checkItems[weekId][critIdx];
+
+  // Auto-complete week if all criteria checked
+  const w = getWeeks().find(x => x.id === weekId);
+  if (w) {
+    const allDone = w.criteria.every((_, i) => state.checkItems[weekId][i]);
+    state.weekCompleted[weekId] = allDone;
+  }
+
+  saveState();
+  if (selectedWeekId === weekId) selectWeek(weekId);
+  else { buildTimeline(); updateStats(); }
+}
+
+function resetAll() {
+  if (confirm('确定要重置全部学习进度吗？此操作不可恢复。')) {
+    state = { weekCompleted: {}, checkItems: {}, dayCheckItems: {} };
+    getWeeks().forEach(w => {
+      state.weekCompleted[w.id] = false;
+      state.checkItems[w.id] = {};
+      w.criteria.forEach((_, i) => { state.checkItems[w.id][i] = false; });
+      if (w.dailyTasks) {
+        state.dayCheckItems[w.id] = {};
+        w.dailyTasks.forEach((d, di) => {
+          state.dayCheckItems[w.id][di] = {};
+          d.criteria.forEach((_, ci) => { state.dayCheckItems[w.id][di][ci] = false; });
+        });
+      }
+    });
+    saveState();
+    selectedWeekId = null;
+    buildTimeline();
+    renderHomepage();
+    updateStats();
+  }
+}
+
+// ===== STATS =====
+function updateStats() {
+  const totalWeeks = getWeeks().length;
+  const completedWeeks = getWeeks().filter(w => state.weekCompleted[w.id]).length;
+
+  let totalItems = 0, doneItems = 0;
+  getWeeks().forEach(w => {
+    w.criteria.forEach((_, i) => {
+      totalItems++;
+      if (state.checkItems[w.id] && state.checkItems[w.id][i]) doneItems++;
+    });
+  });
+
+  const progressPct = totalWeeks > 0 ? Math.round((completedWeeks / totalWeeks) * 100) : 0;
+  const defaultLast = getWeeks()[getWeeks().length - 1]?.id || 1;
+  const currentWeek = getWeeks().find(w => !state.weekCompleted[w.id])?.id || defaultLast;
+  const currentTitle = getWeeks().find(w => w.id === currentWeek)?.title || '—';
+
+  document.getElementById('stat-progress').textContent = progressPct + '%';
+  document.getElementById('stat-completed').textContent = completedWeeks + '/' + totalWeeks;
+  document.getElementById('stat-items').textContent = doneItems + '/' + totalItems;
+  document.getElementById('stat-current').textContent = '第' + currentWeek + '周';
+
+  // Sidebar stats
+  document.getElementById('sidebarCompleted').textContent = completedWeeks + '/' + totalWeeks;
+  document.getElementById('sidebarPct').textContent = progressPct + '%';
+}
+
+function getCurrentFilter() {
+  const active = document.querySelector('.phase-tab.active');
+  return active ? active.dataset.filter : 'all';
+}
+
+function updateFilterLabel(filter) {
+  const label = document.getElementById('filterLabel');
+  const mapBio = {
+    all: '显示全部周数',
+    foundation: '基础阶段：PyTorch → Transformer (第2-4周)',
+    bio: '生物转向：序列建模 → ESM → AlphaFold (第5-7周)',
+    advanced: '进阶训练：微调 → 分布式 → 优化 (第8-11周)',
+    project: '项目产出：完整项目 (第12周)',
+    worldmodel: '世界模型：从原理到生物模拟 (第13-15周)'
+  };
+  const mapWM = {
+    all: '显示全部周数',
+    math: '数学基础：概率/ELBO/SSM/RNN动力学 (第1-2周)',
+    vae: 'VAE + Transformer 动力学建模 (第3-4周)',
+    rl: 'Model-Based RL + Dreamer (第5-6周)',
+    system: '系统化 + 优化 + 工程化 (第7, 11周)',
+    bio: '生物应用：Protein/Cell WM (第8-10周)',
+    project: '项目产出：三选一 WM 项目 (第12周)'
+  };
+  const map = currentTrack === 'worldmodel' ? mapWM : mapBio;
+  label.textContent = map[filter] || '';
+}
+
+// ===== TRACK SELECTOR =====
+document.getElementById('trackSelector').addEventListener('click', (e) => {
+  if (e.target.classList.contains('track-btn')) {
+    document.querySelectorAll('.track-btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    currentTrack = e.target.dataset.track;
+    state = loadState();
+    document.getElementById('sidebarSubtitle').textContent = currentTrack === 'worldmodel'
+      ? '世界模型系统学习 · 12周'
+      : '生物大模型 · 第2-15周';
+    selectedWeekId = null;
+    buildTimeline();
+    renderHomepage();
+    updateStats();
+  }
+});
+
+// Remove deprecated phase tab / filter label functions
+function getCurrentFilter() { return 'all'; }
+function updateFilterLabel() {}
+
+// ===== DAILY TASKS TOGGLE =====
+function toggleDaily(weekId) {
+  const container = document.getElementById('daily-' + weekId);
+  const btn = document.getElementById('daily-btn-' + weekId);
+  if (!container) return;
+  const isOpen = container.classList.contains('open');
+  if (isOpen) {
+    container.classList.remove('open');
+    btn.classList.remove('open');
+  } else {
+    container.classList.add('open');
+    btn.classList.add('open');
+  }
+}
+
+function toggleAnswers(weekId) {
+  const container = document.getElementById('ans-' + weekId);
+  const btn = document.getElementById('ans-btn-' + weekId);
+  if (!container || !btn) return;
+  const isOpen = container.classList.contains('open');
+  if (isOpen) { container.classList.remove('open'); btn.classList.remove('open'); }
+  else { container.classList.add('open'); btn.classList.add('open'); }
+}
+
+function toggleDayCheck(weekId, dayIdx, critIdx) {
+  if (!state.dayCheckItems[weekId]) state.dayCheckItems[weekId] = {};
+  if (!state.dayCheckItems[weekId][dayIdx]) state.dayCheckItems[weekId][dayIdx] = {};
+  state.dayCheckItems[weekId][dayIdx][critIdx] = !state.dayCheckItems[weekId][dayIdx][critIdx];
+  saveState();
+  if (selectedWeekId === weekId) selectWeek(weekId);
+  else { buildTimeline(); updateStats(); }
+}
+
+// ===== THEME SYNC (Fluid 博客联动) =====
+(function() {
+  // 方式1: iframe 内接收父页面 Fluid 的主题切换消息
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'fluid-theme') {
+      document.documentElement.setAttribute('data-theme', e.data.theme);
+    }
+  });
+  // 方式2: 页面加载时主动尝试读取父页面的主题
+  try {
+    if (window.parent && window.parent !== window) {
+      var parentTheme = window.parent.document.documentElement.getAttribute('data-theme');
+      if (parentTheme) {
+        document.documentElement.setAttribute('data-theme', parentTheme);
+      }
+      // 监听父页面主题变化
+      var observer = new MutationObserver(function() {
+        var t = window.parent.document.documentElement.getAttribute('data-theme');
+        if (t) document.documentElement.setAttribute('data-theme', t);
+      });
+      observer.observe(window.parent.document.documentElement, {
+        attributes: true, attributeFilter: ['data-theme']
+      });
+    }
+  } catch(e) { /* 跨域或非iframe场景，回退到 prefers-color-scheme */ }
+})();
+
+// ===== INIT =====
+buildTimeline();
+renderHomepage();
+updateStats();
+</script>
+</body>
+</html>
